@@ -1,0 +1,50 @@
+#!/bin/bash
+
+: ${SSCFG_HOSTNAME:?"The host name of the configuration server is not set to SSCFG_HOSTNAME."}
+: ${SSCFG_PATH_CERT:?"The path to the certificate file is not set to SSCFG_PATH_CERT."}
+: ${SSCFG_PATH_KEY:?"The path of the private key file is not set to SSCFG_PATH_KEY."}
+: ${PATH_GAKUNIN_SIGNER:?"Gakunin verification certificate is not set to PATH_GAKUNIN_SIGNER."}
+: ${SAMLDS:?"The URL of the DS server is not set in SAMLDS."}
+: ${METADATA_URL:?"The URL of the metadata is not set in METADATA_URL."}
+
+setup_certs () {
+  mkdir -p /etc/shibboleth/cert
+  cp ${SSCFG_PATH_CERT} /etc/shibboleth/cert/server.crt
+  cp ${SSCFG_PATH_KEY} /etc/shibboleth/cert/server.key
+  cp ${SSCFG_PATH_CERT} /etc/pki/tls/certs/server.crt
+  cp ${SSCFG_PATH_KEY} /etc/pki/tls/private/server.key
+  cp ${PATH_GAKUNIN_SIGNER} /etc/shibboleth/cert/gakunin-signer.cer
+
+  chown shibd:shibd /etc/shibboleth/cert/server.crt /etc/shibboleth/cert/server.key /etc/shibboleth/cert/gakunin-signer.cer
+  chown apache:apache /etc/pki/tls/certs/server.crt /etc/pki/tls/private/server.key
+
+  chmod 644 /etc/shibboleth/cert/server.crt /etc/pki/tls/certs/server.crt
+  chmod 400 /etc/shibboleth/cert/server.key /etc/pki/tls/private/server.key
+
+}
+
+setup_ssl_conf () {
+  sed -i -r -e "/ServerName/s|^#?\s*ServerName.+|ServerName ${SSCFG_HOSTNAME}:443|" \
+    -e '/SSLCertificateFile/s|^#?\s*SSLCertificateFile.+|SSLCertificateFile /etc/pki/tls/certs/server.crt|' \
+    -e '/SSLCertificateKeyFile/s|^#?\s*SSLCertificateKeyFile.+|SSLCertificateKeyFile /etc/pki/tls/private/server.key|' \
+    /etc/httpd/conf.d/ssl.conf
+}
+
+setup_shib_conf () {
+  sed -i -r -e "/Location/s|/secure|/shibboleth|" \
+    /etc/httpd/conf.d/shib.conf
+}
+
+setup_shibboleth2_xml () {
+  /usr/local/bin/setup-shibboleth2 /etc/shibboleth/shibboleth2.xml
+}
+
+setup () {
+  setup_certs
+  setup_ssl_conf
+  setup_shib_conf
+  setup_shibboleth2_xml
+}
+
+setup
+exec /usr/bin/supervisord -n -c /etc/supervisord.conf -u root

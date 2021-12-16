@@ -1,0 +1,7 @@
+logs
+*.log
+
+.env
+*.cer
+*.key
+*.pem

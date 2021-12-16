@@ -1,0 +1,21 @@
+ARG NODE_VERSION=16.13
+FROM node:${NODE_VERSION}
+
+WORKDIR /home/node/app
+COPY ./sscfg-srv/package*.json ./
+RUN npm install
+
+COPY ./sscfg-srv ./
+
+ENV NODE_ENV production
+COPY scripts-setup /usr/local/bin
+
+ARG WAIT_FOR_SCRIPT_URL=https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+RUN curl -f -o /usr/local/bin/wait-for-it.sh ${WAIT_FOR_SCRIPT_URL} \
+ && chmod a+x /usr/local/bin/wait-for-it.sh
+
+# hadolint ignore=DL3008,DL3059
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends jq \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*

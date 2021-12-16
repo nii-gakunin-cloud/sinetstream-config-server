@@ -1,0 +1,123 @@
+version: '3.8'
+services:
+  nginx:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${SSCFG_VERSION:-0.2.0}
+    restart: always
+    ports:
+      - 443:443
+    volumes:
+      - type: bind
+        source: ${CERT_FILE}
+        target: /etc/nginx/certs/server.cer
+        read_only: true
+      - type: bind
+        source: ${KEY_FILE}
+        target: /etc/nginx/certs/server.key
+        read_only: true
+    environment:
+      NGINX_HOST: ${SSCFG_HOSTNAME}
+      NGINX_PORT: '443 ssl'
+      CERT_PATH: /etc/nginx/certs/server.cer
+      KEY_PATH: /etc/nginx/certs/server.key
+      SSCFG_SRV_URL: http://nodejs:3030/
+      VUE_APP_SHIBBOLETH_URL: ${SHIBBOLETH_URL:-/shibboleth/}
+      ENABLE_SHIBBOLETH: "${ENABLE_SHIBBOLETH:-}"
+    profiles:
+      - sscfg
+      - shibboleth
+  nodejs:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${SSCFG_VERSION:-0.2.0}
+    restart: always
+    environment:
+      SSCFG_HOSTNAME: ${SSCFG_HOSTNAME}
+      ENABLE_SHIBBOLETH: "${ENABLE_SHIBBOLETH:-}"
+    env_file: .env.sscfg
+    profiles:
+      - sscfg
+      - shibboleth
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-13.5}
+    restart: always
+    volumes:
+      - type: volume
+        source: postgres
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: sscfg
+      POSTGRES_USER: sscfg
+    env_file: .env.sscfg
+  vault:
+    image: &vault_image vault:${VAULT_VERSION:-1.9.0}
+    restart: always
+    volumes:
+      - &vault_vol
+        type: volume
+        source: vault
+        target: /vault/file
+    environment: &vault_env
+      VAULT_LOCAL_CONFIG: '{"listener": {"tcp": {"address": "[::]:8200", "tls_disable": 1}}, "storage": {"file": {"path": "/vault/file"}}}'
+    command: server
+    cap_add:
+      - IPC_LOCK
+    profiles:
+      - vault
+  vault-setup:
+    image: *vault_image
+    volumes:
+      - *vault_vol
+    environment:
+      <<: *vault_env
+    command: server
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - 8200:8200
+    profiles:
+      - setup
+  redis:
+    image: redis:${REDIS_VERSION:-6.2}
+    restart: always
+  shibboleth:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-shib-sp:${SSCFG_VERSION:-0.2.0}
+    restart: always
+    volumes:
+      - type: bind
+        source: ${SP_CERT_FILE}
+        target: /certs/server.cer
+        read_only: true
+      - type: bind
+        source: ${SP_KEY_FILE}
+        target: /certs/server.key
+        read_only: true
+      - type: bind
+        source: ${GAKUNIN_SIGNER}
+        target: /certs/gakunin-signer.cer
+        read_only: true
+    environment:
+      SSCFG_HOSTNAME: ${SSCFG_HOSTNAME}
+      SSCFG_PATH_CERT: /certs/server.cer
+      SSCFG_PATH_KEY: /certs/server.key
+      PATH_GAKUNIN_SIGNER: /certs/gakunin-signer.cer
+      SAMLDS: ${GAKUNIN_SAMLDS}
+      METADATA_URL: ${GAKUNIN_METADATA}
+    env_file: .env.sscfg
+    profiles:
+      - shibboleth
+  setup_db:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${SSCFG_VERSION:-0.2.0}
+    env_file: .env.sscfg
+    environment:
+      VAULT_ADDR: http://vault-setup:8200
+    tty: true
+    stdin_open: true
+    profiles:
+      - setup
+    depends_on:
+      - postgres
+      - vault-setup
+      - redis
+volumes:
+  vault:
+    name: vault
+  postgres:
+    name: postgres

@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  jekyll:
+    image: jekyll/jekyll:4.2.0
+    volumes:
+    - .:/srv/jekyll
+    command: jekyll serve --incremental
+    environment:
+      JEKYLL_UID: "1001"
+      JEKYLL_GID: "1001"
+      JEKYLL_ENV: production
+    ports:
+      - 4000:4000

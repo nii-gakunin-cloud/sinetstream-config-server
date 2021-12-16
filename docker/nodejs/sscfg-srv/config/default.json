@@ -1,0 +1,58 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "public": "../public/",
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "authentication": {
+    "entity": "user",
+    "service": "users",
+    "authStrategies": [
+      "jwt",
+      "local",
+      "api-access"
+    ],
+    "jwtOptions": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "https://localhost",
+      "issuer": "sscfg",
+      "algorithm": "HS256",
+      "expiresIn": "3h"
+    },
+    "local": {
+      "usernameField": "name"
+    },
+    "shibboleth": {
+      "usernameField": "name",
+      "vaultPath": "cubbyhole/sscfg/shibboleth",
+      "url": "/shibboleth/"
+    }
+  },
+  "postgres": {
+    "client": "pg",
+    "connection": "postgres://sscfg:@localhost:5432/sscfg",
+    "migrations": {
+      "tableName": "knex_migrations"
+    },
+    "seeds": {
+      "directory": "../data/seeds"
+    }
+  },
+  "redisParams": {
+    "host": "localhost",
+    "port": 6379
+  },
+  "hashicorpVault": {
+    "addr": "https://localhost:8200/",
+    "rootPath": "kv/sscfg/"
+  },
+  "schedule": {
+    "renewVaultToken": "23 2 * * *",
+    "cleanupAccessKeys": "17 * * * *",
+    "cleanupCubbyhole": "37 1 * * *"
+  }
+}

@@ -1,0 +1,162 @@
+#!/usr/bin/php
+<?php
+
+if ($argc < 2) {
+  fwrite(STDERR, 'Usage: ' . $argv[0] . ' shibboleth2.xml' . "\n");
+  exit(1);
+}
+
+$xml_path = $argv[1];
+$xml = load_shibboleth2_xml($xml_path);
+setup_entity_id($xml);
+setup_ds_server($xml);
+setup_metadata($xml);
+setup_credential_resolver($xml);
+
+$xml->asXML($xml_path);
+
+function load_shibboleth2_xml(string $path): SimpleXMLElement
+{
+  $xml = simplexml_load_file($path);
+  $xml->registerXPathNamespace('c', 'urn:mace:shibboleth:3.0:native:sp:config');
+  return $xml;
+}
+
+function setup_entity_id(SimpleXMLElement $xml): void
+{
+  $hostname = get_env_value('SSCFG_HOSTNAME');
+  $entity_id = 'https://' . $hostname . '/shibboleth-sp';
+  $target = $xml->xpath('//c:ApplicationDefaults/@entityID/..');
+  if (count($target) > 0) {
+    update_attribute($target[0], 'entityID', $entity_id);
+  }
+}
+
+function update_attribute(SimpleXMLElement $el, string $key, string $value): void
+{
+  if (isset($el->attributes()->{$key})) {
+    $el->attributes()->{$key} = $value;
+  } else {
+    $el->addAttribute($key, $value);
+  }
+}
+
+function setup_ds_server(SimpleXMLElement $xml): void
+{
+  $samlds_url = get_env_value('SAMLDS');
+
+  $samlds = $xml->xpath('//c:SessionIntiator[@type="SAMLDS"]');
+  if (count($samlds) > 0) {
+    update_attribute($samlds[0], 'URL', $samlds_url);
+    return;
+  }
+
+  $si_parent = $xml->xpath('//c:Sessions/c:SessionInitiator[@type="Chaining"]');
+  if (count($si_parent) > 0) {
+    $si = $si_parent[0]->addChild('SessionInitiator');
+    $si->addAttribute('type', 'SAMLDS');
+    $si->addAttribute('URL', $samlds_url);
+    return;
+  }
+
+  add_session_initiators($xml);
+}
+
+function add_session_initiators(SimpleXMLElement $xml): void
+{
+  $samlds_url = get_env_value('SAMLDS');
+
+  $parent = $xml->xpath('//c:Sessions');
+  $si_parent = $parent[0]->addChild('SessionInitiator');
+  $si_parent->addAttribute('type', 'Chaining');
+  $si_parent->addAttribute('Location', '/DS');
+  $si_parent->addAttribute('isDefault', 'true');
+  $si_parent->addAttribute('id', 'DS');
+
+  $si1 = $si_parent->addChild('SessionInitiator');
+  $si1->addAttribute('type', 'SAML2');
+  $si1->addAttribute('template', 'bindingTemplate.html');
+
+  $si2 = $si_parent->addChild('SessionInitiator');
+  $si2->addAttribute('type', 'Shib1');
+
+  $si3 = $si_parent->addChild('SessionInitiator');
+  $si3->addAttribute('type', 'SAMLDS');
+  $si3->addAttribute('URL', $samlds_url);
+}
+
+function setup_metadata(SimpleXMLElement $xml): void
+{
+  $target = $xml->xpath('//c:MetadataProvider[@type="XML"][@url]');
+  if (count($target) > 0) {
+    $metadata_url = get_env_value('METADATA_URL');
+    update_attribute($target[0], 'url', $metadata_url);
+    return;
+  }
+  add_metadata_provider($xml);
+}
+
+function add_metadata_provider(SimpleXMLElement $xml): void
+{
+  $metadata_url = get_env_value('METADATA_URL');
+
+  $parent = $xml->xpath('//c:ApplicationDefaults');
+  $mp = $parent[0]->addChild('MetadataProvider');
+  $mp->addAttribute('type', 'XML');
+  $mp->addAttribute('validate', 'true');
+  $mp->addAttribute('url', $metadata_url);
+  $mp->addAttribute('backingFilePath', 'federation-metadata.xml');
+  $mp->addAttribute('maxRefreshDelay', '7200');
+
+  $mf1 = $mp->addChild('MetadataFilter');
+  $mf1->addAttribute('type', 'RequireValidUntil');
+  $mf1->addAttribute('maxValidityInterval', '1296000');
+
+  $mf2 = $mp->addChild('MetadataFilter');
+  $mf2->addAttribute('type', 'Signature');
+  $mf2->addAttribute('certificate', '/etc/shibboleth/cert/gakunin-signer.cer');
+  $mf2->addAttribute('verifyBackup', 'false');
+
+  $df = $mp->addChild('DiscoveryFilter');
+  $df->addAttribute('type', 'Exclude');
+  $df->addAttribute('matcher', 'EntityAttributes');
+  $df->addAttribute('trimTags', 'true');
+  $df->addAttribute('attributeName', 'http://macedir.org/entity-category');
+  $df->addAttribute('attributeNameFormat', 'urn:oasis:names:tc:SAML:2.0:attrname-format:uri');
+  $df->addAttribute('attributeValue', 'http://refeds.org/category/hide-from-discovery');
+
+  $tp1 = $mp->addChild('TransportOption', '1');
+  $tp1->addAttribute('provider', 'CURL');
+  $tp1->addAttribute('option', '64');
+
+  $tp2 = $mp->addChild('TransportOption', '2');
+  $tp2->addAttribute('provider', 'CURL');
+  $tp2->addAttribute('option', '81');
+
+  $tp3 = $mp->addChild('TransportOption', '/etc/pki/tls/certs/ca-bundle.crt');
+  $tp3->addAttribute('provider', 'CURL');
+  $tp3->addAttribute('option', '10065');
+}
+
+function setup_credential_resolver(SimpleXMLElement $xml): void
+{
+  $targets = $xml->xpath('//c:CredentialResolver[@type="File"]');
+  foreach ($targets as &$target) {
+    update_attribute($target, 'key', 'cert/server.key');
+    update_attribute($target, 'certificate', 'cert/server.crt');
+  }
+}
+
+function get_env_value(string $key, ?string $default = null): string
+{
+    $ret = getenv($key);
+    if (!$ret) {
+        if (is_null($default)) {
+            throw new Exception("You have to set the environment variable '$key'.");
+        }
+        return $default;
+    }
+    return $ret;
+}
+
+?>

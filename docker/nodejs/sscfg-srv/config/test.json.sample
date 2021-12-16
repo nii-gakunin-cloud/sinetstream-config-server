@@ -1,0 +1,23 @@
+{
+  "port": 3031,
+  "authentication": {
+    "secret": "kMllKj5zELkhV197NwO+kTaI16k=",
+    "authStrategies": [
+      "jwt",
+      "local",
+      "api-access",
+      "shibboleth"
+    ]
+  },
+  "postgres": {
+    "connection": "postgres://db-user:test-pass00@postgres:5432/sscfg"
+  },
+  "redisParams": {
+    "host": "redis"
+  },
+  "hashicorpVault": {
+    "addr": "http://vault:8200/",
+    "token": "vault-token",
+    "rootPath": "kv/test/sscfg/"
+  }
+}

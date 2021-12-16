@@ -1,0 +1,22 @@
+{
+  "host": "sscfg.example.org",
+  "port": "3030",
+  "authentication": {
+    "secret": "jwt-secret",
+    "jwtOptions": {
+      "audience": "https://sscfg.example.org",
+      "issuer": "sscfg.example.org",
+      "expiresIn": "3h"
+    }
+  },
+  "postgres": {
+    "connection": "postgres://sscfg:@postgres:5432/sscfg",
+  }
+  "redisParams": {
+    "host": "redis"
+  },
+  "hashicorpVault": {
+    "addr": "http://vault:8200/",
+    "token": "vault-token"
+  }
+}

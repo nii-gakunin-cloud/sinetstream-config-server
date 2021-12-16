@@ -1,0 +1,32 @@
+exclude:
+- docker-compose.yml
+- Gemfile
+- Gemfile.lock
+- _config.yml
+title: コンフィグサーバマニュアル
+repository: nii-gakunin-cloud/sinetstream
+remote_theme: aksakalli/jekyll-doc-theme@gh-pages
+baseurl: /manual
+lang: ja
+bootwatch: readable
+collections:
+  docs:
+    permalink: /:collection/:path/
+    output: true
+
+defaults:
+- scope:
+    type: docs
+  values:
+    layout: docs
+    sectionid: docs
+url: "https://sscfg.example.org"
+plugins:
+- jekyll-redirect-from
+- jekyll-spaceship
+jekyll-spaceship:
+  processors:
+  - mermaid-processor
+  mermaid-processor:
+    syntax:
+      code: mermaid

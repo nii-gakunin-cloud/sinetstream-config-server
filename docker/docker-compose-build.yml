@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  sscfg-ui:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${IMG_TAG}
+    build: ./nginx
+  sscfg-srv:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${IMG_TAG}
+    build: ./nodejs
+  sscfg-setup:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${IMG_TAG}
+    build:
+      context: ./nodejs
+      dockerfile: Dockerfile-setup
+  sscfg-shib-sp:
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-shib-sp:${IMG_TAG}
+    build: ./shibboleth/image

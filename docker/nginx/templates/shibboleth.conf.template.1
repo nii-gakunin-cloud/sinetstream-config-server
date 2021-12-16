@@ -1,0 +1,58 @@
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_HOST};
+
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_types text/css application/javascript image/x-icon;
+    
+    ssl_certificate     ${CERT_PATH};
+    ssl_certificate_key ${KEY_PATH};
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    client_max_body_size 100M;
+
+    location / {
+        proxy_pass ${SSCFG_SRV_URL};
+        proxy_redirect off;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /ui/ {
+        alias /var/www/html/;
+        try_files $uri $uri/ /ui/index.html;
+    }
+
+    location /manual/ {
+        alias /var/www/manual/;
+        try_files $uri $uri/ /manual/index.html;
+    }
+
+    location ${VUE_APP_SHIBBOLETH_URL} {
+        proxy_pass https://shibboleth/shibboleth/;
+        proxy_redirect off;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /Shibboleth.sso/ {
+        proxy_pass https://shibboleth/Shibboleth.sso/;
+        proxy_redirect off;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}

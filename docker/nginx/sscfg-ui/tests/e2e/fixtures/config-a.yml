@@ -1,0 +1,8 @@
+kafka-service-002:
+  type: kafka
+  brokers: kafka0.example.org
+  topic: test-kafka-002
+kafka-service-003:
+  type: kafka
+  brokers: kafka0.example.org
+  topic: test-kafka-003

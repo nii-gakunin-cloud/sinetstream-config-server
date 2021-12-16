@@ -1,0 +1,92 @@
+#!/bin/bash
+
+die () {
+  local message=$1
+  echo "ERROR: $message" >&2
+  exit 1
+}
+
+search_docker_compose () {
+  local docker_info=$(docker info -f '{{json .}}' | jq '.ClientInfo.Plugins[] | select(.Name=="compose")')
+  if [[ -n "$docker_info" ]]; then
+    DOCKER_COMPOSE='docker compose'
+  elif type docker-compose > /dev/null 2>&1; then
+    DOCKER_COMPOSE='docker-compose'
+    local version=$(docker-compose version --short)
+    local vers=(${version//./ })
+    if [[ ${vers[1]} -lt 28 ]]; then
+      die "It must be docker-compose version 1.28.0 or later."
+    fi
+  else
+    die "'docker compose' not found"
+  fi
+}
+
+check_command () {
+  if ! type curl > /dev/null 2>&1; then
+    die "'curl' not found"
+  elif ! type jq > /dev/null 2>&1; then
+    die "'jq' not found"
+  elif ! type docker > /dev/null 2>&1; then
+    die "'docker' not found"
+  elif ! docker info > /dev/null 2>&1; then
+    die "You do not have permission to run docker."
+  fi
+}
+
+volume_info () {
+  local name=$1
+  echo $(docker volume ls --format '{{json .}}' | jq ". | select(.Name==\"$name\")")
+}
+
+check_volumes () {
+  for name in postgres vault; do
+    if [[ $(volume_info $name) != '' ]]; then
+      die "There is already a volume named '$name'. To setup, please delete the existing volume."
+    fi
+  done
+}
+
+vault_status () {
+  $DOCKER_COMPOSE exec -e VAULT_ADDR=http://localhost:8200 vault vault status > /dev/null 2>&1
+}
+
+is_enabled_shibboleth () {
+  [[ ${ENABLE_SHIBBOLETH,,} = true ]] || [[ "$ENABLE_SHIBBOLETH" -ne 0 ]]
+}
+
+load_env_file () {
+  local dot_env=$1
+  if [[ -f $dot_env ]]; then
+    set +a
+    source $dot_env
+    set -a
+  fi
+}
+
+container_id () {
+  local service=$1
+  $DOCKER_COMPOSE ps -q $service
+}
+
+is_external_vault () {
+  if [[ -f $TOP_DIR/.sscfg ]]; then
+    grep -v -e '^#' $TOP_DIR/.env.sscfg | grep -q -e 'VAULT_ADDR='
+    return $?
+  else
+    return 1
+  fi
+}
+
+setup_dummy_gakunin_env_vars () {
+  set +u
+  if ! is_enabled_shibboleth; then
+    load_env_file ${DOT_ENV:-$TOP_DIR/.env}
+    export GAKUNIN_SIGNER=signer
+    export GAKUNIN_SAMLDS=ds
+    export GAKUNIN_METADATA=metadata
+    export SP_CERT_FILE=$CERT_FILE
+    export SP_KEY_FILE=$KEY_FILE
+  fi
+  set -u
+}
