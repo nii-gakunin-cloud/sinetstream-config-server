@@ -1,7 +1,7 @@
 {
   "name": "sscfg-srv",
   "description": "",
-  "version": "0.2.0",
+  "version": "1.6.0",
   "homepage": "https://github.com/nii-gakunin-cloud/sinetstream",
   "private": true,
   "main": "src",

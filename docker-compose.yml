@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   nginx:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${SSCFG_VERSION:-0.2.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${SSCFG_VERSION:-1.6.0}
     restart: always
     ports:
       - 443:443
@@ -26,7 +26,7 @@ services:
       - sscfg
       - shibboleth
   nodejs:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${SSCFG_VERSION:-0.2.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${SSCFG_VERSION:-1.6.0}
     restart: always
     environment:
       SSCFG_HOSTNAME: ${SSCFG_HOSTNAME}
@@ -78,7 +78,7 @@ services:
     image: redis:${REDIS_VERSION:-6.2}
     restart: always
   shibboleth:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-shib-sp:${SSCFG_VERSION:-0.2.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-shib-sp:${SSCFG_VERSION:-1.6.0}
     restart: always
     volumes:
       - type: bind
@@ -104,7 +104,7 @@ services:
     profiles:
       - shibboleth
   setup_db:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${SSCFG_VERSION:-0.2.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${SSCFG_VERSION:-1.6.0}
     env_file: .env.sscfg
     environment:
       VAULT_ADDR: http://vault-setup:8200

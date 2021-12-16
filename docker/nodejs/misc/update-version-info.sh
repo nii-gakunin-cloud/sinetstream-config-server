@@ -1,6 +1,6 @@
 #!/bin/sh
 TOP_DIR="$( cd -- "$(dirname "$0")/.." >/dev/null 2>&1 ; pwd -P )"
-: ${SSCFG_VERSION:=0.2.0}
+: ${SSCFG_VERSION:=1.6.0}
 set -o pipefail
 set -ue
 
