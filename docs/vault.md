@@ -142,11 +142,10 @@ $ mkdir -p vault-logs
 編集後の`docker-compose.yml`は以下のようになります。
 
 ```yml
-version: '3.8'
 services:
 (中略)
   vault:
-    image: &vault_image vault:${VAULT_VERSION:-1.9.0}
+    image: &vault_image vault:1.11.0
     restart: always
     volumes:
       - &vault_vol
@@ -206,8 +205,6 @@ You need to unseal the Vault.
 $ docker compose exec vault sh
 / # 
 ```
-
-> 上記の例では Docker Compose v2 を用いています。Docker Compose v1 を利用している環境では `docker compose`のかわりに `docker-compose` を用いてください。
 
 次に、コンテナ内のシェルでvaultのアドレスとトークンを環境変数に設定します。トークンについてはシェルの履歴に残さないようにするために`cat`コマンドで標準入力から入力します（`cat`の入力を終えるには `ctrl-d`などをタイプしてください）。
 

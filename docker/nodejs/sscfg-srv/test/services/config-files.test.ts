@@ -1,7 +1,7 @@
 import { BadRequest, NotFound } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
 import { generateKeyPairSync, KeyObject, randomBytes } from 'crypto';
-import knex from 'knex';
+import { Knex } from 'knex';
 import YAML from 'yaml';
 import app from '../../src/app';
 import { toVid as toAfileVid } from '../../src/hooks/process-attach-files';
@@ -23,7 +23,7 @@ describe('\'config-files\' service', () => {
   let stream: Streams;
   let pubKey: KeyObject;
   let privKey: KeyObject;
-  let db: knex;
+  let db: Knex;
   let params0: Params;
   let params: Params;
   let fingerprint: string;
@@ -96,9 +96,7 @@ config:
   const getAuthentication = async (
     uinfo: Record<string, string>,
   ): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };
@@ -178,12 +176,8 @@ config:
 
         beforeEach(async () => {
           await db('streams').del();
-          stream = await app.service('streams').create(
-            { name: streamName, configFile }, { ...params0 },
-          );
-          await app.service('members').create(
-            { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-          );
+          stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+          await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         });
       });
     });
@@ -365,9 +359,7 @@ config:
             });
 
             beforeEach(async () => {
-              await app.service('encrypt-keys').patch(
-                ekey1.id, { enabled: false }, { ...params0 },
-              );
+              await app.service('encrypt-keys').patch(ekey1.id, { enabled: false }, { ...params0 });
             });
           });
 
@@ -407,12 +399,8 @@ config:
 
         beforeEach(async () => {
           await db('streams').del();
-          stream = await app.service('streams').create(
-            { name: streamName, configFile }, { ...params0 },
-          );
-          await app.service('members').create(
-            { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-          );
+          stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+          await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
           ekey1 = await app.service('encrypt-keys').create(
             {
               size: 256,
@@ -703,12 +691,8 @@ config:
 
         beforeEach(async () => {
           await db('streams').del();
-          stream = await app.service('streams').create(
-            { name: streamName, configFile }, { ...params0 },
-          );
-          await app.service('members').create(
-            { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-          );
+          stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+          await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         });
       });
     });
@@ -1229,12 +1213,8 @@ config:
 
         beforeEach(async () => {
           await db('streams').del();
-          stream = await app.service('streams').create(
-            { name: streamName, configFile }, { ...params0 },
-          );
-          await app.service('members').create(
-            { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-          );
+          stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+          await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         });
       });
     });
@@ -1340,21 +1320,15 @@ config:
         });
 
         beforeEach(async () => {
-          await app.service('encrypt-keys').patch(
-            ekey1.id, { enabled: false }, { ...params0 },
-          );
+          await app.service('encrypt-keys').patch(ekey1.id, { enabled: false }, { ...params0 });
         });
       });
 
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
-        await app.service('members').create(
-          { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+        await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         ekey1 = await app.service('encrypt-keys').create(
           {
             size: 256,
@@ -1474,12 +1448,8 @@ config:
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
-        await app.service('members').create(
-          { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+        await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         params = { ...params0 };
         attachFile = await app.service('attach-files').create({
           content: attachFileContent,
@@ -1725,12 +1695,8 @@ config:
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
-        await app.service('members').create(
-          { user_id: user1.id, stream_id: stream.id }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
+        await app.service('members').create({ user_id: user1.id, stream_id: stream.id }, { ...params0 });
         params = { ...params0 };
       });
     });
@@ -1803,9 +1769,7 @@ config:
 
       beforeEach(async () => {
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName }, { ...params0 });
         params = { ...params0 };
       });
     });
@@ -1869,9 +1833,7 @@ config:
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
         ekey1 = await app.service('encrypt-keys').create(
           {
             size: 256,
@@ -1919,9 +1881,7 @@ config:
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
         await app.service('encrypt-keys').create(
           {
             size: 256,
@@ -1969,9 +1929,7 @@ config:
       beforeEach(async () => {
         await db('public_keys').del();
         await db('streams').del();
-        stream = await app.service('streams').create(
-          { name: streamName, configFile }, { ...params0 },
-        );
+        stream = await app.service('streams').create({ name: streamName, configFile }, { ...params0 });
         await app.service('encrypt-keys').create(
           {
             size: 256,

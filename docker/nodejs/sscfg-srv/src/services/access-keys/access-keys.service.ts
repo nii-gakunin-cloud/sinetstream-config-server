@@ -1,6 +1,6 @@
 // Initializes the `access-keys` service on path `/access-keys`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/access-keys.model';
 import { AccessKeys } from './access-keys.class';
@@ -23,13 +23,13 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'streams',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('id', 'name', 'comment', 'configFile');
         },
       },
       {
         expression: 'expiration',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('expirationTime');
         },
       },

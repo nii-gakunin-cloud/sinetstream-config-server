@@ -1,7 +1,7 @@
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class Topic extends BaseModel {
-  static modelName = 'Topic'
+  static modelName = 'Topic';
 
   static instanceDefaults() {
     return {

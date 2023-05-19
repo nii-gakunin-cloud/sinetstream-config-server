@@ -104,7 +104,8 @@ const sinetstreamEncrypt: ScalarTag = {
       throw new SinetstreamConfigfileError();
     }
     const lineWidth = Math.max(
-      ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth,
+      ctx.options.lineWidth - ctx.indent.length,
+      ctx.options.minContentWidth,
     );
     const item = bufferToYamlScalar(value.buffer, lineWidth, type);
     if (comment != null) { item.comment = comment; }
@@ -120,7 +121,8 @@ const binaryTag: ScalarTag = {
   resolve: (src, _) => Buffer.from(src, 'base64'),
   stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
     const lineWidth = Math.max(
-      ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth,
+      ctx.options.lineWidth - ctx.indent.length,
+      ctx.options.minContentWidth,
     );
     const item = bufferToYamlScalar(value as Buffer, lineWidth, type);
     if (comment != null) { item.comment = comment; }
@@ -279,7 +281,10 @@ function embedError(doc: Document.Parsed, message: string): void {
 }
 
 function embedSecret(
-  doc: Document.Parsed, path: string, value: Buffer, publicKey?: PublicKey,
+  doc: Document.Parsed,
+  path: string,
+  value: Buffer,
+  publicKey?: PublicKey,
 ): void {
   if (publicKey != null) {
     embedValue(doc, path, new SecretData(value, publicKey.publicKey));

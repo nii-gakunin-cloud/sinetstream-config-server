@@ -35,7 +35,10 @@ async function removePolicy(context: HookContext, name: string): Promise<void> {
 }
 
 async function createVaultUser(
-  context: HookContext, id: number, name: string, password: string,
+  context: HookContext,
+  id: number,
+  name: string,
+  password: string,
 ): Promise<void> {
   const vault = context.app.service('sys-vault');
   const policy = await createPolicy(context, id);
@@ -84,7 +87,9 @@ async function checkCurrentPassword(context: HookContext, password: string): Pro
 }
 
 async function changePassword(
-  context: HookContext, currentPassword: string, password: string,
+  context: HookContext,
+  currentPassword: string,
+  password: string,
 ): Promise<void> {
   const { name } = getItems(context);
   const { user } = context.params;

@@ -109,11 +109,10 @@ $ cat << EOF > vault-config/seal.hcl
 編集後の`docker-compose.yml`は以下のようになります。
 
 ```yml
-version: '3.8'
 services:
 (中略)
   vault:
-    image: &vault_image vault:${VAULT_VERSION:-1.9.0}
+    image: &vault_image vault:1.11.0
     restart: always
     volumes:
       - &vault_vol

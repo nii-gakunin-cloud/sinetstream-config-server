@@ -107,9 +107,10 @@ export default defineComponent({
     const { User } = context.root.$FeathersVuex.api;
     const { item } = useGet({ model: User, id: uid.value, local: true });
     const { dialog, observer, onSubmit } = useSubmitDialog(
-      props, context.emit, undefined,
+      props,
+      context.emit,
+      undefined,
       (e) => {
-        console.log(e);
         const message = e.code === 400
           ? 'パスワードが正しくありません。' : 'パスワード変更処理でエラーが発生しました。';
         return { currentPassword: [message] };

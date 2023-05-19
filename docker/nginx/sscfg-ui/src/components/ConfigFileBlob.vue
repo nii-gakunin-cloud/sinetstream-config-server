@@ -3,7 +3,7 @@
     <slot
       :url="url"
       :download="filename"
-      :isEmpty="isEmpty"
+      :is-empty="isEmpty"
     />
   </div>
 </template>

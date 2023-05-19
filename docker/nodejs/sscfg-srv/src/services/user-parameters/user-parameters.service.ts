@@ -1,6 +1,6 @@
 // Initializes the `user-parameters` service on path `/user-parameters`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/user-parameters.model';
 import { UserParameters } from './user-parameters.class';
@@ -21,13 +21,13 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'stream',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'comment');
         },
       },
       {
         expression: 'user',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'displayName', 'avatar');
         },
       },

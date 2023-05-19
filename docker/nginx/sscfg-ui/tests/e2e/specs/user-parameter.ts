@@ -300,15 +300,11 @@ describe('ユーザパラメータに関するテスト', () => {
 
                 cy.get('@user').type(`${user1}{enter}`, { force: true });
                 cy.get('@binary').check({ force: true });
-                cy.fixture(file1, 'base64').then((data) => {
-                  cy.get('@file').attachFile({
-                    fileContent: data,
-                    filePath: file1,
-                    fileName: file1,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(file1, null).as('filename');
+                cy.get('@file').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 cy.get('@binary').uncheck({ force: true });
                 cy.get('@value').type(value0);
                 cy.get('@target').type(target);
@@ -364,15 +360,11 @@ describe('ユーザパラメータに関するテスト', () => {
 
                 cy.get('@user').type(`${username}{enter}`, { force: true });
                 cy.get('@binary').check({ force: true });
-                cy.fixture(file1, 'base64').then((data) => {
-                  cy.get('@file').attachFile({
-                    fileContent: data,
-                    filePath: file1,
-                    fileName: file1,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(file1, null).as('filename');
+                cy.get('@file').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 cy.get('@target').type(target);
                 cy.get('@comment').type(comment);
                 if (!secret) {
@@ -421,15 +413,11 @@ describe('ユーザパラメータに関するテスト', () => {
                 cy.get('@user').type(`${username}{enter}`, { force: true });
                 cy.get('@value').type(value0);
                 cy.get('@binary').check({ force: true });
-                cy.fixture(file1, 'base64').then((data) => {
-                  cy.get('@file').attachFile({
-                    fileContent: data,
-                    filePath: file1,
-                    fileName: file1,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(file1, null).as('filename');
+                cy.get('@file').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 cy.get('@target').type(target);
                 cy.get('@comment').type(comment);
                 if (!secret) {
@@ -554,15 +542,11 @@ describe('ユーザパラメータに関するテスト', () => {
               cy.get('div.error--text .v-messages__message');
             });
             cy.get('@btnSubmit').should('be.disabled');
-            cy.fixture(file1, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath: file1,
-                fileName: file1,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(file1, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@file').parents('div.v-text-field').first().within(() => {
               cy.get('div.error--text .v-messages__message').should('not.exist');
             });
@@ -604,15 +588,11 @@ describe('ユーザパラメータに関するテスト', () => {
           cy.get('@user').type(`${user1}{enter}`, { force: true });
           cy.get('@value').type(value0);
           cy.get('@binary').check({ force: true });
-          cy.fixture(file1, 'base64').then((data) => {
-            cy.get('@file').attachFile({
-              fileContent: data,
-              filePath: file1,
-              fileName: file1,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(file1, null).as('filename');
+          cy.get('@file').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('@target').type(target);
           cy.get('@comment').type(comment);
           cy.get('@secret').uncheck({ force: true });
@@ -693,7 +673,15 @@ describe('ユーザパラメータに関するテスト', () => {
               beforeEach(() => {
                 cy.userToken(username, password).then((token) => {
                   cy.addUserParameter(
-                    token, streamId1, user1, target, value0, null, oldSecret, true, comment,
+                    token,
+                    streamId1,
+                    user1,
+                    target,
+                    value0,
+                    null,
+                    oldSecret,
+                    true,
+                    comment,
                   );
                 });
                 cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -730,15 +718,11 @@ describe('ユーザパラメータに関するテスト', () => {
                     cy.get('[data-cy=input-value]').should('not.exist');
                     cy.get('[data-cy=input-binary]').should('not.exist');
 
-                    cy.fixture(file1, 'base64').then((data) => {
-                      cy.get('@file').attachFile({
-                        fileContent: data,
-                        filePath: file1,
-                        fileName: file1,
-                        encoding: 'base64',
-                        mimeType: 'application/octet-stream',
-                      });
-                    });
+                    cy.fixture(file1, null).as('filename');
+                    cy.get('@file').selectFile({
+                      contents: '@filename',
+                      mimeType: 'application/octet-stream',
+                    }, { force: true });
 
                     if (secret !== oldSecret) {
                       cy.get('@secret').parent().click();
@@ -762,7 +746,15 @@ describe('ユーザパラメータに関するテスト', () => {
               beforeEach(() => {
                 cy.userToken(username, password).then((token) => {
                   cy.addUserParameter(
-                    token, streamId1, user1, target, null, file0, oldSecret, true, comment,
+                    token,
+                    streamId1,
+                    user1,
+                    target,
+                    null,
+                    file0,
+                    oldSecret,
+                    true,
+                    comment,
                   );
                 });
                 cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -820,7 +812,15 @@ describe('ユーザパラメータに関するテスト', () => {
             beforeEach(() => {
               cy.userToken(username, password).then((token) => {
                 cy.addUserParameter(
-                  token, streamId1, user1, target, value0, null, !secret, true, comment,
+                  token,
+                  streamId1,
+                  user1,
+                  target,
+                  value0,
+                  null,
+                  !secret,
+                  true,
+                  comment,
                 );
               });
               cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -874,7 +874,15 @@ describe('ユーザパラメータに関するテスト', () => {
             beforeEach(() => {
               cy.userToken(username, password).then((token) => {
                 cy.addUserParameter(
-                  token, streamId1, user1, target, null, file0, !secret, true, comment,
+                  token,
+                  streamId1,
+                  user1,
+                  target,
+                  null,
+                  file0,
+                  !secret,
+                  true,
+                  comment,
                 );
               });
               cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -915,7 +923,15 @@ describe('ユーザパラメータに関するテスト', () => {
           beforeEach(() => {
             cy.userToken(username, password).then((token) => {
               cy.addUserParameter(
-                token, streamId1, user1, target, value0, null, false, !enabled, comment,
+                token,
+                streamId1,
+                user1,
+                target,
+                value0,
+                null,
+                false,
+                !enabled,
+                comment,
               );
             });
             cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -1066,7 +1082,15 @@ describe('ユーザパラメータに関するテスト', () => {
         beforeEach(() => {
           cy.userToken(username, password).then((token) => {
             cy.addUserParameter(
-              token, streamId1, user1, target, value0, null, false, true, comment,
+              token,
+              streamId1,
+              user1,
+              target,
+              value0,
+              null,
+              false,
+              true,
+              comment,
             );
           });
           cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -1097,15 +1121,11 @@ describe('ユーザパラメータに関するテスト', () => {
               cy.get('@btnSubmit').should('be.enabled').and('include.text', '更新');
               cy.get('[data-cy=input-value]').should('not.exist');
               cy.get('[data-cy=input-binary]').should('not.exist');
-              cy.fixture(file1, 'base64').then((data) => {
-                cy.get('@file').attachFile({
-                  fileContent: data,
-                  filePath: file1,
-                  fileName: file1,
-                  encoding: 'base64',
-                  mimeType: 'application/octet-stream',
-                });
-              });
+              cy.fixture(file1, null).as('filename');
+              cy.get('@file').selectFile({
+                contents: '@filename',
+                mimeType: 'application/octet-stream',
+              }, { force: true });
               cy.get('@secret').parent().click();
               cy.get('@secret').invoke('attr', 'aria-checked').should('eq', 'true');
               cy.get('@target').clear().type(targetA);
@@ -1190,7 +1210,15 @@ describe('ユーザパラメータに関するテスト', () => {
           beforeEach(() => {
             cy.userToken(username, password).then((token) => {
               cy.addUserParameter(
-                token, streamId1, user1, target, value0, null, secret, enabled, comment,
+                token,
+                streamId1,
+                user1,
+                target,
+                value0,
+                null,
+                secret,
+                enabled,
+                comment,
               );
             });
             cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);
@@ -1230,7 +1258,15 @@ describe('ユーザパラメータに関するテスト', () => {
           beforeEach(() => {
             cy.userToken(username, password).then((token) => {
               cy.addUserParameter(
-                token, streamId1, user1, target, null, file0, secret, enabled, comment,
+                token,
+                streamId1,
+                user1,
+                target,
+                null,
+                file0,
+                secret,
+                enabled,
+                comment,
               );
             });
             cy.visit(`/streams/${streamId1}/user-parameters`).contains(`ユーザパラメータ一覧: ${stream1}`);

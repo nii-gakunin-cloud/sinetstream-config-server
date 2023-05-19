@@ -1,15 +1,17 @@
 import { BadRequest, Forbidden, NotFound } from '@feathersjs/errors';
-import { generateKeyPairSync, randomBytes } from 'crypto';
-import knex from 'knex';
+import { generateKeyPairSync, KeyObject, randomBytes } from 'crypto';
+import { Knex } from 'knex';
 import sshpk from 'sshpk';
 import app from '../../src/app';
 import { toVid as toAfileVid } from '../../src/hooks/process-attach-files';
 import { toVid as toEkeyVid } from '../../src/hooks/process-encrypt-keys';
 import { toVid as toUprmVid } from '../../src/hooks/process-user-parameters';
 import { Users } from '../../src/models/users.model';
+import { RsaOaepSha1, RsaOaepSha256 } from '../../src/services/api-v1-secrets/api-v1-secrets.class';
+import { decrypt } from '../../src/utils/crypto';
 
 describe('\'api-v1-secrets\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('api/v1/secrets');
   let user: Users;
   let user1: Users;
@@ -37,6 +39,7 @@ describe('\'api-v1-secrets\' service', () => {
   const content = randomBytes(32).toString('base64');
   const textContent = 'abcdefgh';
   let authentication: Record<string, any>;
+  let decryptKey: KeyObject;
 
   describe('秘匿情報が取得できること', () => {
     describe('データ暗号鍵', () => {
@@ -172,6 +175,28 @@ describe('\'api-v1-secrets\' service', () => {
         });
       });
     });
+
+    describe('kemパラメータの指定', () => {
+      it.each([[RsaOaepSha256, 1], [RsaOaepSha1, 2]])('kemの指定: %s', async (kem, hdr2) => {
+        expect.assertions(6);
+        const params = {
+          headers: { [HTTP_HEADER_FINGERPRINT]: fingerprint2 },
+          authentication,
+          test,
+          query: { kem },
+        };
+        const res = await service.get(vid5, params);
+        expect(res.id).toBe(vid5);
+        expect(res.target).toBe(targetUprm);
+        expect(res.fingerprint).toBe(fingerprint2);
+        expect(res.value).not.toBeNull();
+
+        const encryptedData = Buffer.from(res.value, 'base64');
+        expect(encryptedData.readUInt8(2)).toBe(hdr2);
+        const decryptedData = decrypt(encryptedData, decryptKey);
+        expect(decryptedData.toString()).toBe(textContent);
+      });
+    });
   });
 
   describe('異常系', () => {
@@ -238,6 +263,14 @@ describe('\'api-v1-secrets\' service', () => {
         await service.get(vid13, params);
       }).rejects.toThrowError(Forbidden);
     });
+
+    it.each(['xxx', '0', '1', '2', 'sha256', 'sha1'])('正しくないkemパラメータの指定: %s', async (kem) => {
+      expect.assertions(1);
+      const params = { authentication, test, query: { kem } };
+      await expect(async () => {
+        await service.get(vid2, params);
+      }).rejects.toThrowError(BadRequest);
+    });
   });
 
   beforeEach(async () => {
@@ -265,9 +298,7 @@ describe('\'api-v1-secrets\' service', () => {
   };
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };
@@ -365,7 +396,8 @@ describe('\'api-v1-secrets\' service', () => {
     vid13 = toUprmVid(uprm3).split('.').slice(-3).join('-');
 
     const pubkeyService = app.service('public-keys');
-    const { publicKey: publicKey2 } = generateKeyPairSync('rsa', { modulusLength: 3072 });
+    const { publicKey: publicKey2, privateKey: privateKey2 } = generateKeyPairSync('rsa', { modulusLength: 3072 });
+    decryptKey = privateKey2;
     const pubKey2 = sshpk.parseKey(publicKey2.export({ type: 'pkcs1', format: 'pem' }), 'auto');
     fingerprint2 = pubKey2.fingerprint('sha256').toString();
     await pubkeyService.create(

@@ -1,6 +1,6 @@
 import { BadRequest, MethodNotAllowed, NotFound } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { getAppRoleName } from '../../src/hooks/process-access-keys';
 import { Streams } from '../../src/models/streams.model';
@@ -8,7 +8,7 @@ import { Users } from '../../src/models/users.model';
 import { AccessKeys } from '../../src/services/access-keys/access-keys.class';
 
 describe('\'access-keys\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('access-keys');
   const comment = 'comment access key';
   let user: Users;
@@ -60,12 +60,10 @@ describe('\'access-keys\' service', () => {
       expect(accessKey.secretId).not.toBeNull();
       expect(accessKey.user_id).toBe(user.id);
 
-      const accessKey1 = await service.get(
-        accessKey.id, {
-          query: { $joinEager: 'streams' },
-          ...params,
-        },
-      );
+      const accessKey1 = await service.get(accessKey.id, {
+        query: { $joinEager: 'streams' },
+        ...params,
+      });
       if (accessKey1.streams instanceof Array) {
         expect(accessKey1.streams.length).toBe(1);
         expect(accessKey1.streams[0].id).toBe(stream.id);
@@ -378,9 +376,7 @@ describe('\'access-keys\' service', () => {
   });
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };
@@ -400,12 +396,8 @@ describe('\'access-keys\' service', () => {
     authentication2 = await getAuthentication(userInfo2);
 
     const streamService = app.service('streams');
-    stream = await streamService.create(
-      { name: 'stream0' }, { user, test: { jest: true } },
-    );
-    otherStream = await streamService.create(
-      { name: 'stream1' }, { user: otherUser, test: { jest: true } },
-    );
+    stream = await streamService.create({ name: 'stream0' }, { user, test: { jest: true } });
+    otherStream = await streamService.create({ name: 'stream1' }, { user: otherUser, test: { jest: true } });
   });
 
   afterAll(async () => {

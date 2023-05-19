@@ -4,7 +4,8 @@ import {
 
 const useSubmitDialog = (props: ValueAware<boolean>, emit: EmitFn): SubmitDialog => (
   useSubmitDialog0(
-    props, emit,
+    props,
+    emit,
     (res) => {
       emit('change-stream', res.stream_id);
     },

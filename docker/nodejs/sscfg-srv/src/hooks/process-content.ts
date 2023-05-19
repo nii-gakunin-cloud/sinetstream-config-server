@@ -37,9 +37,11 @@ export const filterBinaryContent = (
       };
     };
     const data = getItems(context);
-    replaceItems(context,
+    replaceItems(
+      context,
       data instanceof Array
         ? data.map(procContent)
-        : procContent(data));
+        : procContent(data),
+    );
     return context;
   });

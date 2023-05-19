@@ -221,9 +221,9 @@ class SscfgAuthenticationService extends AuthenticationService {
       throw new NotAuthenticated('No authentication strategies allowed for creating a JWT (`authStrategies`)');
     }
 
-    const { authentication, ...authResult0 } = await this.authenticate(
-      data, params, ...authStrategies,
-    );
+    const {
+      authentication, ...authResult0
+    } = await this.authenticate(data, params, ...authStrategies);
     const { vaultToken, ...authenticationOther } = authentication;
     const authResult: Record<string, any> = { ...authResult0, authentication: authenticationOther };
 

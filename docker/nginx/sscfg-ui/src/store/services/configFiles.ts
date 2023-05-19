@@ -2,7 +2,7 @@ import { disallow } from 'feathers-hooks-common';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class ConfigFile extends BaseModel {
-  static modelName = 'ConfigFile'
+  static modelName = 'ConfigFile';
 
   static instanceDefaults() {
     return {

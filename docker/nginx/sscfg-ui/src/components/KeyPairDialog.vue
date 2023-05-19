@@ -84,8 +84,6 @@
 import {
   computed, defineComponent, onMounted, onUnmounted, Ref, ref,
 } from '@vue/composition-api';
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import Worker from 'worker-loader!../workers/keypair.worker';
 import { useDialog } from '@/utils/dialog';
 
 export default defineComponent({
@@ -99,10 +97,10 @@ export default defineComponent({
     const { dialog } = useDialog(props, emit);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const keypair: Ref<Record<string, any>> = ref({});
-    let worker: Worker;
+    const worker = new Worker(new URL('../workers/keypair.worker.ts', import.meta.url));
     const keysize = ref(0);
     const running = computed(
-      () => keysize && !('private' in keypair.value),
+      () => keysize.value && !('private' in keypair.value),
     );
     const generate = () => {
       const size = 3072;
@@ -122,8 +120,8 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      worker = new Worker();
-      worker.onmessage = (event) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      worker.onmessage = (event: any) => {
         keypair.value = event.data;
         emit('generate-keypair', keypair.value.public);
       };

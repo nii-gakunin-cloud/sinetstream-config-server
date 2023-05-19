@@ -106,7 +106,8 @@ export default defineComponent({
     const item = ref(new PublicKey());
     const keypairDialog = ref(false);
     const { dialog, observer, onSubmit } = useSubmitDialog(
-      props, context.emit,
+      props,
+      context.emit,
       () => {
         context.emit('change-public-key');
       },
@@ -122,7 +123,6 @@ export default defineComponent({
         } else if (error.name != null) {
           errorMessage = error.name;
         } else {
-          console.log(error);
           errorMessage = error.toString();
         }
         return { publicKey: [errorMessage] };

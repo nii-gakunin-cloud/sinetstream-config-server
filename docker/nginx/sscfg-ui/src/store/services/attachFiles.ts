@@ -2,7 +2,7 @@ import { HookContext } from '@feathersjs/feathers';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class AttachFile extends BaseModel {
-  static modelName = 'AttachFile'
+  static modelName = 'AttachFile';
 
   static instanceDefaults() {
     return {

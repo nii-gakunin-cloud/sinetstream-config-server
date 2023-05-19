@@ -25,12 +25,14 @@ export class ApiKeyStrategy extends AuthenticationBaseStrategy {
   }
 
   get vaultToken(): string {
-    const { token } = this.app?.get('hashicorpVault');
+    const { token } = this.app?.get('hashicorpVault') || {};
     return token;
   }
 
   async getAppRole(
-    user: Record<string, any>, secretId: string, params: Params,
+    user: Record<string, any>,
+    secretId: string,
+    params: Params,
   ): Promise<AppRoleInfo> {
     const accessKeyService = this.app?.service('access-keys');
     if (accessKeyService == null) {

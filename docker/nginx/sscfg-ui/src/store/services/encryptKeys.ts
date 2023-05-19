@@ -2,7 +2,7 @@ import { HookContext } from '@feathersjs/feathers';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class EncryptKey extends BaseModel {
-  static modelName = 'EncryptKey'
+  static modelName = 'EncryptKey';
 
   static instanceDefaults() {
     return {

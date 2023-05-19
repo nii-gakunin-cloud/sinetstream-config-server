@@ -56,6 +56,9 @@ service-mqtt-001:
   consitency: AT_LEAST_ONCE
   value_type: text
 `;
+  const config1Path = 'tests/e2e/fixtures/config1.yml';
+  const config2Path = 'tests/e2e/fixtures/config2.yml';
+  const configAPath = 'tests/e2e/fixtures/config-a.yml';
 
   describe('コンフィグ情報一覧画面', () => {
     describe('コンフィグ情報が登録されている場合', () => {
@@ -463,7 +466,7 @@ service-mqtt-001:
           cy.get('[data-cy=input-comment]').type(`${comment} ${stream1}`);
           cy.wait(waitForAttachFile);
           cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
-            cy.get('input[type=file]').attachFile('config1.yml');
+            cy.get('input[type=file]').selectFile(config1Path, { force: true });
           });
           cy.get('@btnSubmit').click();
         });
@@ -726,7 +729,7 @@ service-mqtt-001:
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
                 cy.get('input[type=file]').as('inputFile');
-                cy.get('@inputFile').attachFile('config2.yml');
+                cy.get('@inputFile').selectFile(config2Path, { force: true });
               });
               cy.get('@btnSubmit').should('be.disabled');
               cy.get('div.v-alert').within(() => {
@@ -741,7 +744,7 @@ service-mqtt-001:
 
               // トピック名重複の警告表示が再表示されること
               cy.wait(waitForAttachFile);
-              cy.get('@inputFile').attachFile('config1.yml');
+              cy.get('@inputFile').selectFile(config1Path, { force: true });
               cy.get('div.v-alert').invoke('attr', 'style').should('not.include', 'display: none');
               cy.get('div.v-alert').within(() => {
                 cy.get('div.v-alert__content').contains(topic1);
@@ -856,7 +859,7 @@ service-mqtt-001:
               cy.get('input[data-cy=input-name]').should('have.attr', 'readonly');
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
-                cy.get('input[type=file]').attachFile('config2.yml');
+                cy.get('input[type=file]').selectFile(config2Path, { force: true });
               });
               cy.get('@btnSubmit').click();
             });
@@ -967,7 +970,7 @@ service-mqtt-001:
               // 入力欄の内容を変更する
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
-                cy.get('input[type=file]').attachFile('config2.yml');
+                cy.get('input[type=file]').selectFile(config2Path, { force: true });
               });
               cy.fixture('config2.yml').then((cfg) => {
                 cy.get('@configFile').should('include.value', cfg.trim());
@@ -1084,7 +1087,7 @@ service-mqtt-001:
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
                 cy.get('input[type=file]').as('inputFile');
-                cy.get('@inputFile').attachFile('config2.yml');
+                cy.get('@inputFile').selectFile(config2Path, { force: true });
               });
               cy.fixture('config2.yml').then((cfg) => {
                 cy.get('@configFile').should('include.value', cfg.trim());
@@ -1106,7 +1109,7 @@ service-mqtt-001:
 
               // トピック名重複の警告表示が再表示されること
               cy.wait(waitForAttachFile);
-              cy.get('@inputFile').attachFile('config2.yml');
+              cy.get('@inputFile').selectFile(config2Path, { force: true });
               cy.get('@alert').invoke('attr', 'style').should('not.include', 'display: none');
               cy.get('@alert').within(() => {
                 cy.get('div.v-alert__content').contains(topic2);
@@ -1260,7 +1263,7 @@ service-mqtt-001:
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
                 cy.get('input[type=file]').as('inputFile');
-                cy.get('@inputFile').attachFile('config2.yml');
+                cy.get('@inputFile').selectFile(config2Path, { force: true });
               });
               cy.fixture('config2.yml').then((cfg) => {
                 cy.get('@configFile').should('include.value', cfg.trim());
@@ -1282,7 +1285,8 @@ service-mqtt-001:
 
               // トピック名重複の警告表示が再表示されること
               cy.wait(waitForAttachFile);
-              cy.get('@inputFile').attachFile('config2.yml');
+              cy.fixture('config2.yml', null).as('filename');
+              cy.get('@inputFile').selectFile(config2Path, { force: true });
               cy.get('@alert').invoke('attr', 'style').should('not.include', 'display: none');
               cy.get('@alert').within(() => {
                 cy.get('div.v-alert__content').contains(topic2);
@@ -1452,7 +1456,7 @@ service-mqtt-001:
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
                 cy.get('input[type=file]').as('inputFile');
-                cy.get('@inputFile').attachFile('config-a.yml');
+                cy.get('@inputFile').selectFile(configAPath, { force: true });
               });
               cy.fixture('config-a.yml').then((cfg) => {
                 cy.get('@configFile').should('include.value', cfg.trim());
@@ -1650,7 +1654,8 @@ service-mqtt-001:
               cy.wait(waitForAttachFile);
               cy.get('div.config-file-textarea[data-cy=input-config-file]').within(() => {
                 cy.get('input[type=file]').as('inputFile');
-                cy.get('@inputFile').attachFile('config2.yml');
+                cy.fixture('config2.yml', null).as('filename');
+                cy.get('@inputFile').selectFile(config2Path, { force: true });
               });
               cy.fixture('config2.yml').then((cfg) => {
                 cy.get('@configFile').should('include.value', cfg.trim());
@@ -1669,7 +1674,7 @@ service-mqtt-001:
 
               // トピック名重複の警告表示が再表示されること
               cy.wait(waitForAttachFile);
-              cy.get('@inputFile').attachFile('config2.yml');
+              cy.get('@inputFile').selectFile(config2Path, { force: true });
               cy.get('@alert').invoke('attr', 'style').should('not.include', 'display: none');
               cy.get('@alert').within(() => {
                 cy.get('div.v-alert__content').contains(topic2);

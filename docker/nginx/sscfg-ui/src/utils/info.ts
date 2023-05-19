@@ -18,10 +18,12 @@ const useVersion = (): VersionInfo => {
   const service = feathersClient.service('info');
   (async () => {
     const res = await service.get('version');
-    Object.assign(version.value,
+    Object.assign(
+      version.value,
       Object.fromEntries(Object.entries(res).map(
         ([key, value]) => ([`server ${key}`, String(value)]),
-      )));
+      )),
+    );
   })();
 
   if (process.env.VUE_APP_VERSION) {

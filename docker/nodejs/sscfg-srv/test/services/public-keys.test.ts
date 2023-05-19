@@ -2,7 +2,7 @@
 import { BadRequest, MethodNotAllowed, NotFound } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
 import { generateKeyPairSync } from 'crypto';
-import knex from 'knex';
+import { Knex } from 'knex';
 import sshpk from 'sshpk';
 import app from '../../src/app';
 import { toVid } from '../../src/hooks/process-public-key';
@@ -10,7 +10,7 @@ import { PublicKeys } from '../../src/models/public-keys.model';
 import { Users } from '../../src/models/users.model';
 
 describe('\'public-keys\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('public-keys');
 
   let user: Users;
@@ -178,9 +178,7 @@ describe('\'public-keys\' service', () => {
 
         beforeAll(() => {
           const { publicKey: pubKey } = generateKeyPairSync('rsa', { modulusLength: 3072 });
-          otherOpensshKey = sshpk.parseKey(
-            pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto',
-          ).toString('ssh');
+          otherOpensshKey = sshpk.parseKey(pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto').toString('ssh');
         });
       });
     });
@@ -251,7 +249,9 @@ describe('\'public-keys\' service', () => {
             expect.assertions(5);
             expect(publicKey.defaultKey).toBe(false);
             const newPubKey = await service.patch(
-              publicKey.id, { defaultKey: true }, { ...params },
+              publicKey.id,
+              { defaultKey: true },
+              { ...params },
             );
             const { defaultKey: _, updatedAt: updatedAt0, ...pubkeyParams0 } = publicKey;
             const { defaultKey: defaultKey1, updatedAt: updatedAt1, ...pubkeyParams1 } = newPubKey;
@@ -281,7 +281,9 @@ describe('\'public-keys\' service', () => {
             expect.assertions(5);
             expect(publicKey.defaultKey).toBe(true);
             const newPubKey = await service.patch(
-              publicKey.id, { defaultKey: false }, { ...params },
+              publicKey.id,
+              { defaultKey: false },
+              { ...params },
             );
             const { defaultKey: _, updatedAt: updatedAt0, ...pubkeyParams0 } = publicKey;
             const { defaultKey: defaultKey1, updatedAt: updatedAt1, ...pubkeyParams1 } = newPubKey;
@@ -307,9 +309,7 @@ describe('\'public-keys\' service', () => {
 
         beforeAll(() => {
           const { publicKey: pubKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
-          otherOpensshKey = sshpk.parseKey(
-            pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto',
-          ).toString('ssh');
+          otherOpensshKey = sshpk.parseKey(pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto').toString('ssh');
         });
       });
 
@@ -331,9 +331,7 @@ describe('\'public-keys\' service', () => {
 
       beforeEach(async () => {
         const { publicKey: pubKey } = generateKeyPairSync('rsa', { modulusLength: 3072 });
-        const otherOpensshKey = sshpk.parseKey(
-          pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto',
-        ).toString('ssh');
+        const otherOpensshKey = sshpk.parseKey(pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto').toString('ssh');
         await service.create(
           { publicKey: otherOpensshKey, defaultKey: false },
           { ...params },
@@ -377,9 +375,7 @@ describe('\'public-keys\' service', () => {
       it('PUTで更新できない', async () => {
         expect.assertions(1);
         await expect(async () => {
-          await service.update(
-            publicKey.id, { defaultKey: false, comment }, params,
-          );
+          await service.update(publicKey.id, { defaultKey: false, comment }, params);
         }).rejects.toThrowError(MethodNotAllowed);
       });
     });
@@ -459,9 +455,7 @@ describe('\'public-keys\' service', () => {
 
         beforeAll(() => {
           const { publicKey: pubKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
-          otherOpensshKey = sshpk.parseKey(
-            pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto',
-          ).toString('ssh');
+          otherOpensshKey = sshpk.parseKey(pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto').toString('ssh');
         });
       });
     });
@@ -539,9 +533,7 @@ describe('\'public-keys\' service', () => {
 
         beforeAll(() => {
           const { publicKey: pubKey } = generateKeyPairSync('rsa', { modulusLength: 3072 });
-          otherOpensshKey = sshpk.parseKey(
-            pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto',
-          ).toString('ssh');
+          otherOpensshKey = sshpk.parseKey(pubKey.export({ type: 'pkcs1', format: 'pem' }), 'auto').toString('ssh');
         });
       });
     });
@@ -662,9 +654,7 @@ describe('\'public-keys\' service', () => {
   });
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };

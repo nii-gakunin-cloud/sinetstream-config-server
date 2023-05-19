@@ -45,6 +45,10 @@ async function registerVaultPolicy(context: HookContext): Promise<string> {
 path "${rootPath}users/${user.id}/*" {
   capabilities = ["read"]
 }
+
+path "${rootPath}users/${user.id}/user-public-keys/*" {
+  capabilities = ["create", "read", "delete"]
+}
 `;
   if (allPermitted) {
     policy += `
@@ -113,7 +117,9 @@ async function generateAppRoleSecretId(context: HookContext, name: string): Prom
 }
 
 async function getSecretIdExpirationTime(
-  context: HookContext, name: string, secretId: string,
+  context: HookContext,
+  name: string,
+  secretId: string,
 ): Promise<string> {
   const { app } = context;
   const path = `auth/approle/role/${name}/secret-id/lookup`;

@@ -3,13 +3,13 @@ import {
   BadRequest, Conflict, Forbidden, MethodNotAllowed, NotFound,
 } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { Streams } from '../../src/models/streams.model';
 import { Users } from '../../src/models/users.model';
 
 describe('\'streams\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('streams');
 
   let user: Users;
@@ -260,9 +260,7 @@ kafka-service:
       describe('memberの指定', () => {
         it('データ管理者による取得', async () => {
           expect.assertions(12);
-          const stream1 = await service.get(
-            stream.id, { ...params, query: { $joinEager: 'members' } },
-          );
+          const stream1 = await service.get(stream.id, { ...params, query: { $joinEager: 'members' } });
           expect(stream1.id).toBe(stream.id);
           expect(stream1.name).toBe(name);
           expect(stream1.comment).toBe(comment);
@@ -281,9 +279,7 @@ kafka-service:
 
         it('共同利用者による取得', async () => {
           expect.assertions(12);
-          const stream1 = await service.get(
-            stream.id, { user: user1, test: params.test, query: { $joinEager: 'members' } },
-          );
+          const stream1 = await service.get(stream.id, { user: user1, test: params.test, query: { $joinEager: 'members' } });
           expect(stream1.id).toBe(stream.id);
           expect(stream1.name).toBe(name);
           expect(stream1.comment).toBe(comment);
@@ -303,9 +299,7 @@ kafka-service:
 
       it('members.userの指定', async () => {
         expect.assertions(12);
-        const stream1 = await service.get(
-          stream.id, { ...params, query: { $joinEager: 'members.user' } },
-        );
+        const stream1 = await service.get(stream.id, { ...params, query: { $joinEager: 'members.user' } });
         expect(stream1.id).toBe(stream.id);
         expect(stream1.name).toBe(name);
         expect(stream1.comment).toBe(comment);
@@ -330,9 +324,7 @@ kafka-service:
 
       it('topicsの指定', async () => {
         expect.assertions(10);
-        const stream1 = await service.get(
-          stream.id, { ...params, query: { $joinEager: 'topics' } },
-        );
+        const stream1 = await service.get(stream.id, { ...params, query: { $joinEager: 'topics' } });
         expect(stream1.id).toBe(stream.id);
         expect(stream1.name).toBe(name);
         expect(stream1.comment).toBe(comment);

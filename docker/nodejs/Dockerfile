@@ -1,4 +1,4 @@
-ARG NODE_VERSION=16.13
+ARG NODE_VERSION=16.20
 FROM node:${NODE_VERSION} as build
 WORKDIR /home/node/app
 COPY sscfg-srv/package*.json ./

@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   sscfg-ui:
     image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${IMG_TAG}

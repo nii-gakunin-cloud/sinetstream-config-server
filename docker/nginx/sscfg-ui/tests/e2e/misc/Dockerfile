@@ -1,4 +1,4 @@
-ARG DOCKER_VERSION=20.10.11
+ARG DOCKER_VERSION=20.10.17
 FROM docker:${DOCKER_VERSION}-dind
 
 RUN apk add --no-cache supervisor \
@@ -6,7 +6,7 @@ RUN apk add --no-cache supervisor \
 
 COPY sscfg.ini /etc/supervisor.d
 
-ARG COMPOSE_V2_VERSION=2.1.1
+ARG COMPOSE_V2_VERSION=2.6.0
 ARG COMPOSE_URL=https://github.com/docker/compose/releases/download/v${COMPOSE_V2_VERSION}/docker-compose-linux-x86_64
 RUN apk add --no-cache curl \
  && mkdir -p /usr/local/libexec/docker/cli-plugins \

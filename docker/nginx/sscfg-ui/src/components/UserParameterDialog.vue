@@ -230,12 +230,14 @@ export default defineComponent({
   },
   setup(props, context) {
     const { UserParameter, Member } = context.root.$FeathersVuex.api;
+    const newUserParameter = (sid: number) => {
+      const item = new UserParameter();
+      item.stream_id = sid;
+      return item;
+    };
     const { item } = props.id != null
       ? useGet({ model: UserParameter, id: props.id })
-      : { item: ref(new UserParameter()) };
-    if (props.id == null && props.sid != null) {
-      item.value.stream_id = props.sid;
-    }
+      : { item: ref(newUserParameter(props.sid)) };
     const { items: members } = useFind({
       model: Member,
       params: { query: { stream_id: item.value.stream_id } },

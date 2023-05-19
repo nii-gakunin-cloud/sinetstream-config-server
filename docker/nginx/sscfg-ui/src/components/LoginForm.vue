@@ -70,13 +70,11 @@ export default defineComponent({
     const alert = ref('');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const observer: Ref<any> = ref(null);
-    const login = async () => $store.dispatch(
-      'auth/authenticate', {
-        strategy: 'local',
-        name: name.value,
-        password: password.value,
-      },
-    );
+    const login = async () => $store.dispatch('auth/authenticate', {
+      strategy: 'local',
+      name: name.value,
+      password: password.value,
+    });
     const nextRoute = () => {
       const { redirect } = $route.query;
       if (typeof redirect === 'string') {
@@ -91,7 +89,6 @@ export default defineComponent({
         const msg = 'ユーザまたはパスワードが正しくありません。';
         observer.value.setErrors({ name: [msg], password: [msg] });
       } else {
-        console.log(error);
         alert.value = `サーバでエラーが発生しました。(${error.toString()})`;
       }
     };

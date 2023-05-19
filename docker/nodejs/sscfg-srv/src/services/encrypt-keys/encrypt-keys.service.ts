@@ -1,6 +1,6 @@
 // Initializes the `encrypt-keys` service on path `/encrypt-keys`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/encrypt-keys.model';
 import { EncryptKeys } from './encrypt-keys.class';
@@ -21,19 +21,19 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'stream',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'comment');
         },
       },
       {
         expression: 'user',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'displayName', 'avatar');
         },
       },
       {
         expression: 'latestVersion',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('ver');
         },
       },

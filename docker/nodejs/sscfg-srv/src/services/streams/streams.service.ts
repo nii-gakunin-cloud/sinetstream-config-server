@@ -1,6 +1,6 @@
 // Initializes the `streams` service on path `/streams`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/streams.model';
 import { Streams } from './streams.class';
@@ -23,13 +23,13 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'members.user',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'email', 'displayName');
         },
       },
       {
         expression: 'members',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('admin', 'user_id');
         },
       },

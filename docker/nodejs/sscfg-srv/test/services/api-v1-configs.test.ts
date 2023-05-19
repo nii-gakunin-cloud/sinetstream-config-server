@@ -2,13 +2,13 @@ import { Forbidden, NotFound } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
 import { randomBytes } from 'crypto';
 import { JSONPath } from 'jsonpath-plus';
-import knex from 'knex';
+import { Knex } from 'knex';
 import YAML from 'yaml';
 import app from '../../src/app';
 import { Users } from '../../src/models/users.model';
 
 describe('\'api-v1-configs\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('api/v1/configs');
   let user: Users;
   let user1: Users;
@@ -725,9 +725,7 @@ describe('\'api-v1-configs\' service', () => {
   };
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };
@@ -752,16 +750,13 @@ describe('\'api-v1-configs\' service', () => {
     paramsOtherUser = { user: otherUser, authentication: authentication2, test };
 
     const accessKeyService = app.service('access-keys');
-    const accessKey1 = await accessKeyService.create(
-      { allPermitted: true }, { ...params },
-    );
+    const accessKey1 = await accessKeyService.create({ allPermitted: true }, { ...params });
     secret1 = accessKey1.secretId;
-    const accessKey2 = await accessKeyService.create(
-      { allPermitted: true }, { ...paramsUser1 },
-    );
+    const accessKey2 = await accessKeyService.create({ allPermitted: true }, { ...paramsUser1 });
     secret2 = accessKey2.secretId;
     const accessKey3 = await accessKeyService.create(
-      { allPermitted: true }, { ...paramsOtherUser },
+      { allPermitted: true },
+      { ...paramsOtherUser },
     );
     secret3 = accessKey3.secretId;
   });

@@ -242,15 +242,11 @@ kafka-service-002:
             cy.get('form header div').contains('添付ファイルの登録')
               .parents('div.v-dialog').first()
               .within(() => {
-                cy.fixture(file1, 'base64').then((data) => {
-                  cy.get('[data-cy=input-file]').attachFile({
-                    fileContent: data,
-                    filePath: file1,
-                    fileName: file1,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(file1, null).as('filename');
+                cy.get('[data-cy=input-file]').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 cy.get('[data-cy=input-target]').type(attachFileTarget);
                 cy.get('[data-cy=input-comment]').type(comment);
                 cy.get('button[data-cy=btn-dialog-submit]').click();
@@ -292,15 +288,11 @@ kafka-service-002:
                 .parents('div.v-dialog').first()
                 .within(() => {
                   cy.get('[data-cy=input-comment]').clear().type(`new ${comment}`);
-                  cy.fixture(file1, 'base64').then((data) => {
-                    cy.get('[data-cy=input-file]').attachFile({
-                      fileContent: data,
-                      filePath: file1,
-                      fileName: file1,
-                      encoding: 'base64',
-                      mimeType: 'application/octet-stream',
-                    });
-                  });
+                  cy.fixture(file1, null).as('filename');
+                  cy.get('[data-cy=input-file]').selectFile({
+                    contents: '@filename',
+                    mimeType: 'application/octet-stream',
+                  }, { force: true });
                   cy.get('button[data-cy=btn-dialog-submit]').click();
                 });
               cy.contains('添付ファイルの更新').should('not.exist');
@@ -630,7 +622,15 @@ kafka-service-002:
         beforeEach(() => {
           cy.userToken(username, password).then((token) => {
             cy.addUserParameter(
-              token, streamId1, username, userParameterTarget, value0, null, false, true, comment,
+              token,
+              streamId1,
+              username,
+              userParameterTarget,
+              value0,
+              null,
+              false,
+              true,
+              comment,
             );
           });
         });

@@ -3,12 +3,12 @@ import {
   BadRequest, Conflict, MethodNotAllowed, NotFound,
 } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { Users } from '../../src/models/users.model';
 
 describe('\'users\' service', () => {
-  let db: knex;
+  let db: Knex;
   let admin: Users;
   const test = { jest: true };
 

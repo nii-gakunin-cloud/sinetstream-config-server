@@ -1,13 +1,12 @@
-version: '3.8'
 services:
   vault:
-    image: vault:${VAULT_VERSION:-1.9.0}
+    image: vault:${VAULT_VERSION:-1.11.0}
     container_name: vault
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: vault-token
       SKIP_SETCAP: skip
   postgres:
-    image: postgres:${POSTGRES_VERSION:-13.5}
+    image: postgres:${POSTGRES_VERSION:-13.7}
     container_name: postgres
     environment:
       POSTGRES_PASSWORD: test-pass00
@@ -17,7 +16,7 @@ services:
     image: redis:${REDIS_VERSION:-6.2}
     container_name: redis
   sscfg-srv:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${SSCFG_VERSION:-0.2.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-srv:${SSCFG_VERSION:-1.6.0}
     container_name: sscfg-srv
     environment:
       VAULT_TOKEN: vault-token
@@ -30,7 +29,7 @@ services:
     build:
       context: ./build
       args:
-        BASE_IMG: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${SSCFG_VERSION:-0.2.0}
+        BASE_IMG: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-setup:${SSCFG_VERSION:-1.6.0}
     container_name: sscfg-setup
     environment:
       VAULT_TOKEN: vault-token

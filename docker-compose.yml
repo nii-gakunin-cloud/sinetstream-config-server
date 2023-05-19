@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   nginx:
-    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${SSCFG_VERSION:-1.6.0}
+    image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-ui:${SSCFG_VERSION:-1.6.1-SNAPSHOT}
     restart: always
     ports:
       - 443:443
@@ -36,7 +35,7 @@ services:
       - sscfg
       - shibboleth
   postgres:
-    image: postgres:${POSTGRES_VERSION:-13.5}
+    image: postgres:13.11
     restart: always
     volumes:
       - type: volume
@@ -47,7 +46,7 @@ services:
       POSTGRES_USER: sscfg
     env_file: .env.sscfg
   vault:
-    image: &vault_image vault:${VAULT_VERSION:-1.9.0}
+    image: &vault_image vault:1.13.2
     restart: always
     volumes:
       - &vault_vol
@@ -75,7 +74,7 @@ services:
     profiles:
       - setup
   redis:
-    image: redis:${REDIS_VERSION:-6.2}
+    image: redis:7.0
     restart: always
   shibboleth:
     image: harbor.vcloud.nii.ac.jp/sinetstream/sscfg-shib-sp:${SSCFG_VERSION:-1.6.0}

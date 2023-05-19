@@ -206,15 +206,11 @@ describe('データ暗号鍵に関するテスト', () => {
               cy.get('@size').clear().type(size.toString());
               cy.get('@auto').uncheck({ force: true });
               const filePath = `key-${size}`;
-              cy.fixture(filePath, 'base64').then((data) => {
-                cy.get('@file').attachFile({
-                  fileContent: data,
-                  filePath,
-                  fileName: filePath,
-                  encoding: 'base64',
-                  mimeType: 'application/octet-stream',
-                });
-              });
+              cy.fixture(filePath, null).as('filename');
+              cy.get('@file').selectFile({
+                contents: '@filename',
+                mimeType: 'application/octet-stream',
+              }, { force: true });
               cy.get('@comment').type(comment);
               cy.get('@btnSubmit').click();
             });
@@ -244,15 +240,11 @@ describe('データ暗号鍵に関するテスト', () => {
             cy.get('input[data-cy=input-enabled]').as('enabled');
             cy.get('@auto').uncheck({ force: true });
             const filePath = 'key-256';
-            cy.fixture(filePath, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath,
-                fileName: filePath,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(filePath, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@target').clear().type(target1);
             cy.get('@enabled').uncheck({ force: true });
             cy.get('@btnSubmit').click();
@@ -287,15 +279,11 @@ describe('データ暗号鍵に関するテスト', () => {
           cy.get('@size').clear().type('128');
           cy.get('@auto').uncheck({ force: true });
           const filePath = 'key-128';
-          cy.fixture(filePath, 'base64').then((data) => {
-            cy.get('@file').attachFile({
-              fileContent: data,
-              filePath,
-              fileName: filePath,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(filePath, null).as('filename');
+          cy.get('@file').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('@target').clear().type(target1);
           cy.get('@comment').type(comment);
           cy.get('@enabled').uncheck({ force: true });
@@ -362,15 +350,11 @@ describe('データ暗号鍵に関するテスト', () => {
               cy.get('@btnSubmit').should('be.enabled');
               cy.get('@auto').uncheck({ force: true });
 
-              cy.fixture(fileName, 'base64').then((data) => {
-                cy.get('@file').attachFile({
-                  fileContent: data,
-                  filePath: fileName,
-                  fileName,
-                  encoding: 'base64',
-                  mimeType: 'application/octet-stream',
-                });
-              });
+              cy.fixture(fileName, null).as('filename');
+              cy.get('@file').selectFile({
+                contents: '@filename',
+                mimeType: 'application/octet-stream',
+              }, { force: true });
               cy.get('@file').parents('div.v-text-field').first().within(() => {
                 cy.get('div.error--text .v-messages__message');
               });
@@ -447,15 +431,11 @@ describe('データ暗号鍵に関するテスト', () => {
             cy.get('@btnSubmit').should('be.disabled');
 
             const fileName = 'key-256';
-            cy.fixture(fileName, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath: fileName,
-                fileName,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(fileName, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@file').parents('div.v-text-field').first().within(() => {
               cy.get('div.error--text .v-messages__message').should('not.exist');
             });
@@ -639,15 +619,11 @@ describe('データ暗号鍵に関するテスト', () => {
                 cy.get('@auto').uncheck({ force: true });
                 cy.get('@auto').invoke('attr', 'aria-checked').should('eq', 'false');
                 const filePath = `key-${size}`;
-                cy.fixture(filePath, 'base64').then((data) => {
-                  cy.get('@file').attachFile({
-                    fileContent: data,
-                    filePath,
-                    fileName: filePath,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(filePath, null).as('filename');
+                cy.get('@file').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 cy.get('@btnSubmit').click();
               });
             cy.contains('データ暗号鍵の更新').should('not.exist');
@@ -852,15 +828,11 @@ describe('データ暗号鍵に関するテスト', () => {
               cy.get('@btnSubmit').should('be.enabled');
               cy.get('@auto').uncheck({ force: true });
 
-              cy.fixture(fileName, 'base64').then((data) => {
-                cy.get('@file').attachFile({
-                  fileContent: data,
-                  filePath: fileName,
-                  fileName,
-                  encoding: 'base64',
-                  mimeType: 'application/octet-stream',
-                });
-              });
+              cy.fixture(fileName, null).as('filename');
+              cy.get('@file').selectFile({
+                contents: '@filename',
+                mimeType: 'application/octet-stream',
+              }, { force: true });
               cy.get('@file').parents('div.v-text-field').first().within(() => {
                 cy.get('div.error--text .v-messages__message');
               });
@@ -901,15 +873,11 @@ describe('データ暗号鍵に関するテスト', () => {
             cy.get('@btnSubmit').should('be.disabled');
 
             const fileName = 'key-256';
-            cy.fixture(fileName, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath: fileName,
-                fileName,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(fileName, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@file').parents('div.v-text-field').first().within(() => {
               cy.get('div.error--text .v-messages__message').should('not.exist');
             });

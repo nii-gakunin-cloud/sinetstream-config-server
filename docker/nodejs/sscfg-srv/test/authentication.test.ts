@@ -1,10 +1,10 @@
 import { GeneralError, NotAuthenticated } from '@feathersjs/errors';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../src/app';
 import { Users } from '../src/models/users.model';
 
 describe('authentication', () => {
-  let db: knex;
+  let db: Knex;
   const userInfo = {
     name: 'someone',
     password: 'supersecret',
@@ -220,9 +220,7 @@ path "${rootPath}streams/*" {
   });
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };
@@ -241,9 +239,7 @@ path "${rootPath}streams/*" {
     const user = await app.service('users').create(userInfo, { user: admin });
     const authentication = await getAuthentication(userInfo);
     const params = { user, authentication, test: { jest: true } };
-    const accessKey = await app.service('access-keys').create(
-      { allPermitted: true }, { ...params },
-    );
+    const accessKey = await app.service('access-keys').create({ allPermitted: true }, { ...params });
     secretId = accessKey.secretId;
   });
 

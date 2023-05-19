@@ -100,7 +100,9 @@ export default defineComponent({
     const { Stream } = context.root.$FeathersVuex.api;
     const { item } = useGet({ model: Stream, id: props.id });
     const { dialog, observer, onSubmit } = useSubmitDialog(
-      props, context.emit, undefined,
+      props,
+      context.emit,
+      undefined,
       (e) => ({ confirm: [e.toString()] }),
     );
 

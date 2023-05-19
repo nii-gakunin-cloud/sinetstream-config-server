@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { FeathersVuex } from '@/feathers-client';
 import accessKeys from './services/accessKeys';
 import attachFiles from './services/attachFiles';
 import configFiles from './services/configFiles';
@@ -12,7 +13,6 @@ import topics from './services/topics';
 import userParameters from './services/userParameters';
 import users from './services/users';
 import auth from './store.auth';
-import { FeathersVuex } from '@/feathers-client';
 
 Vue.use(Vuex);
 Vue.use(FeathersVuex);

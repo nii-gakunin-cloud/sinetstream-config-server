@@ -1,6 +1,6 @@
 // Initializes the `public-keys` service on path `/public-keys`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/public-keys.model';
 import { PublicKeys } from './public-keys.class';
@@ -24,7 +24,7 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'user',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'email', 'displayName');
         },
       },

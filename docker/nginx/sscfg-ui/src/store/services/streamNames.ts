@@ -1,7 +1,7 @@
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class StreamName extends BaseModel {
-  static modelName = 'StreamName'
+  static modelName = 'StreamName';
 }
 
 const servicePath = 'stream-names';

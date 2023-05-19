@@ -4,7 +4,7 @@ import {
 } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
 import { randomBytes } from 'crypto';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { toVid } from '../../src/hooks/process-user-parameters';
 import { Streams } from '../../src/models/streams.model';
@@ -12,7 +12,7 @@ import { UserParameters } from '../../src/models/user-parameters.model';
 import { Users } from '../../src/models/users.model';
 
 describe('\'user-parameters\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('user-parameters');
   const vault = app.service('vault');
   let user: Users;
@@ -993,9 +993,7 @@ describe('\'user-parameters\' service', () => {
   };
 
   const getAuthentication = async (uinfo: Record<string, string>): Promise<Record<string, any>> => {
-    const res = await app.service('authentication').create(
-      { ...uinfo, strategy: 'local' }, {},
-    );
+    const res = await app.service('authentication').create({ ...uinfo, strategy: 'local' }, {});
     const { payload, accessToken } = res.authentication;
     return { strategy: 'jwt', accessToken, payload };
   };

@@ -123,15 +123,11 @@ describe('公開鍵に関するテスト', () => {
             .prev('div.v-file-input')
             .get('input[type=file]')
             .as('inputFile');
-          cy.fixture(keyFile, 'base64').then((data) => {
-            cy.get('@inputFile').attachFile({
-              fileContent: data,
-              filePath: keyFile,
-              fileName: keyFile,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(keyFile, null).as('filename');
+          cy.get('@inputFile').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('@btnSubmit').should('be.enabled');
           cy.get('@btnKeypairDialog').should('be.disabled');
           cy.get('@btnSubmit').click();
@@ -292,15 +288,11 @@ describe('公開鍵に関するテスト', () => {
             .prev('div.v-file-input')
             .get('input[type=file]')
             .as('inputFile');
-          cy.fixture(badKeyFile, 'base64').then((data) => {
-            cy.get('@inputFile').attachFile({
-              fileContent: data,
-              filePath: badKeyFile,
-              fileName: badKeyFile,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(badKeyFile, null).as('filename');
+          cy.get('@inputFile').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('@btnSubmit').should('be.enabled');
           cy.get('@btnSubmit').click();
 
@@ -314,15 +306,11 @@ describe('公開鍵に関するテスト', () => {
 
         // エラー後に登録できること
         cy.get('@dialogForm').within(() => {
-          cy.fixture(keyFile, 'base64').then((data) => {
-            cy.get('@inputFile').attachFile({
-              fileContent: data,
-              filePath: keyFile,
-              fileName: keyFile,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(keyFile, null).as('filename');
+          cy.get('@inputFile').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('textarea[data-cy=input-public-key]')
             .should('include.value', 'BEGIN RSA PUBLIC KEY');
           cy.get('@btnSubmit').click();

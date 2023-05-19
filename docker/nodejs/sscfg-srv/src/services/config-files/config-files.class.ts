@@ -122,7 +122,8 @@ class InnerConfigFiles extends AdapterService<Data> implements ServiceMethods<Da
   }
 
   async applyEncryptKeys(
-    data: ProcessData, authentication: AuthenticationRequest,
+    data: ProcessData,
+    authentication: AuthenticationRequest,
   ): Promise<ProcessData> {
     const service = this.app.service('encrypt-keys');
     const { user, query } = data;
@@ -193,7 +194,8 @@ class InnerConfigFiles extends AdapterService<Data> implements ServiceMethods<Da
   }
 
   async applyAttachFiles(
-    data: ProcessData, authentication: AuthenticationRequest,
+    data: ProcessData,
+    authentication: AuthenticationRequest,
   ): Promise<ProcessData> {
     const service = this.app.service('attach-files');
     const { user, query } = data;
@@ -245,7 +247,8 @@ class InnerConfigFiles extends AdapterService<Data> implements ServiceMethods<Da
   }
 
   async applyUserParameters(
-    data: ProcessData, authentication: AuthenticationRequest,
+    data: ProcessData,
+    authentication: AuthenticationRequest,
   ): Promise<ProcessData> {
     const service = this.app.service('user-parameters');
     const { user, query } = data;

@@ -2,7 +2,7 @@ import { HookContext } from '@feathersjs/feathers';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class Member extends BaseModel {
-  static modelName = 'Member'
+  static modelName = 'Member';
 
   static instanceDefaults() {
     return {

@@ -1,32 +1,32 @@
-FROM centos:7.9.2009
+FROM rockylinux:9.1
 
-RUN yum -y update \
- && yum -y install httpd mod_ssl \
- && yum clean all
+RUN dnf -y install httpd mod_ssl which \
+ && dnf clean all
 
-# hadolint ignore=DL3059
-RUN curl 'https://shibboleth.net/cgi-bin/sp_repo.cgi?platform=CentOS_7' \
+RUN curl 'https://shibboleth.net/cgi-bin/sp_repo.cgi?platform=rockylinux9' \
   -o /etc/yum.repos.d/shibboleth.repo \
- && yum -y install shibboleth \
- && yum clean all \
+ && dnf -y install shibboleth \
+ && dnf clean all \
  && chmod a+x /etc/shibboleth/shibd-redhat
 
-# hadolint ignore=DL3059
-RUN yum -y install epel-release \
- && yum -y install supervisor \
- && yum clean all \
- && yum-config-manager --disable epel
+RUN dnf -y install epel-release 'dnf-command(config-manager)' \
+ && dnf config-manager --set-enabled crb \
+ && dnf -y install supervisor \
+ && dnf clean all \
+ && dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm \
+ && dnf config-manager --set-enabled remi
 
-ARG PHP_VERSION=php80
-RUN yum -y install https://rpms.remirepo.net/enterprise/remi-release-7.rpm \
- && yum install -y --enablerepo=remi-${PHP_VERSION} \
-      php php-pdo php-pgsql php-xml which \
- && yum clean all
+ARG PHP_VERSION=8.0
+RUN dnf -y module reset php \
+ && dnf -y module install php:remi-${PHP_VERSION} \
+ && dnf -y install php-pdo php-pgsql \
+ && dnf clean all \
+ && mkdir -p /var/run/php-fpm
 
 EXPOSE 443
 CMD ["/usr/local/bin/init"]
 
-COPY supervisord.conf /etc/supervisord.d/shibboleth.ini
+COPY etc /etc
 COPY php /var/www/html/shibboleth
 COPY scripts /usr/local/bin
 

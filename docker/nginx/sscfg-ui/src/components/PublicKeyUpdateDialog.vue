@@ -86,7 +86,8 @@ export default defineComponent({
     const { PublicKey } = context.root.$FeathersVuex.api;
     const { item } = useGet({ model: PublicKey, id: props.id });
     const { dialog, onSubmit } = useSubmitDialog(
-      props, context.emit,
+      props,
+      context.emit,
       () => {
         context.emit('change-public-key', props.id);
       },

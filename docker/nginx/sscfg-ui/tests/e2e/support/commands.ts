@@ -25,7 +25,8 @@ Cypress.Commands.add('logout', () => {
 
 Cypress.Commands.add('adminToken', () => (cy.userToken(admin, adminPassword)));
 
-Cypress.Commands.add('findUserId',
+Cypress.Commands.add(
+  'findUserId',
   (username) => cy.adminToken().then((token) => cy.request({
     url: `${restUrl}/users?name=${username}`,
     auth: { bearer: token },
@@ -34,7 +35,8 @@ Cypress.Commands.add('findUserId',
       return null;
     }
     return Number(resp.body[0].id);
-  })));
+  })),
+);
 
 Cypress.Commands.add('addUser', (user) => (
   cy.adminToken().then((token) => cy.request({
@@ -137,41 +139,35 @@ Cypress.Commands.add('clearStreams', (token) => {
   });
 });
 
-Cypress.Commands.add(
-  'addMember', (token, adminFlag, streamId, username) => cy.findUserId(username).then(
-    (uid) => cy.request({
-      method: 'POST',
-      url: `${restUrl}/members`,
-      body: { admin: adminFlag, stream_id: streamId, user_id: uid },
-      auth: { bearer: token },
-    }),
-  ),
-);
+Cypress.Commands.add('addMember', (token, adminFlag, streamId, username) => cy.findUserId(username).then(
+  (uid) => cy.request({
+    method: 'POST',
+    url: `${restUrl}/members`,
+    body: { admin: adminFlag, stream_id: streamId, user_id: uid },
+    auth: { bearer: token },
+  }),
+));
 
-Cypress.Commands.add(
-  'downloadBlob', { prevSubject: true }, (subject) => {
-    cy.wrap(subject).get('a.v-btn,a.v-list-item')
-      .should('not.have.class', 'v-btn--disabled')
-      .and('not.have.class', 'v-list-item--disabled');
-    cy.wrap(subject).should('have.attr', 'href');
-    return cy.wrap(subject).invoke('attr', 'href').then((url) => new Cypress.Promise((resolve) => {
-      fetch(url).then(async (resp) => (resolve(await resp.text())));
-    }));
-  },
-);
+Cypress.Commands.add('downloadBlob', { prevSubject: true }, (subject) => {
+  cy.wrap(subject).get('a.v-btn,a.v-list-item')
+    .should('not.have.class', 'v-btn--disabled')
+    .and('not.have.class', 'v-list-item--disabled');
+  cy.wrap(subject).should('have.attr', 'href');
+  return cy.wrap(subject).invoke('attr', 'href').then((url) => new Cypress.Promise((resolve) => {
+    fetch(url).then(async (resp) => (resolve(await resp.text())));
+  }));
+});
 
-Cypress.Commands.add(
-  'addEncryptKey', (token, streamId, size, target, enabled = true, comment = '') => (
-    cy.request({
-      method: 'POST',
-      url: `${restUrl}/encrypt-keys`,
-      auth: { bearer: token },
-      body: {
-        size, target, comment, enabled, stream_id: streamId,
-      },
-    })
-  ),
-);
+Cypress.Commands.add('addEncryptKey', (token, streamId, size, target, enabled = true, comment = '') => (
+  cy.request({
+    method: 'POST',
+    url: `${restUrl}/encrypt-keys`,
+    auth: { bearer: token },
+    body: {
+      size, target, comment, enabled, stream_id: streamId,
+    },
+  })
+));
 
 Cypress.Commands.add(
   'addAttachFile',

@@ -5,7 +5,7 @@ set -ue
 
 generate_git_info () {
   cat <<EOF > .env.local
-VUE_APP_VERSION=${SSCFG_VERSION:-1.6.0}
+VUE_APP_VERSION=${SSCFG_VERSION:-1.6.1-SNAPSHOT}
 VUE_APP_GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
 EOF
 }

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "group:allNonMajor"
+  ],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "enabledManagers": ["npm"],
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "matchPackageNames": ["vue", "vue-template-compiler"],
+      "allowedVersions": "<=2.6.14"
+    },
+    {
+      "matchPackageNames": ["vuetify"],
+      "allowedVersions": "<3.0.0"
+    },
+    {
+      "matchPackageNames": ["vuetify-loader"],
+      "allowedVersions": "<1.8.0"
+    },
+    {
+      "matchPackageNames": ["vuex", "vue-router", "vee-validate"],
+      "allowedVersions": "<4.0.0"
+    },
+    {
+      "matchPackageNames": ["@vue/test-utils"],
+      "allowedVersions": "<2.0.0"
+    },
+    {
+      "matchPackageNames": ["sass"],
+      "allowedVersions": "<1.33.0"
+    }
+  ],
+  "timezone": "Asia/Tokyo",
+  "schedule": [
+    "before 11am on friday"
+  ],
+  "assignees": ["suri_endo"]
+}

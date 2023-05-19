@@ -44,7 +44,8 @@ function withinExpirationTime(context: HookContext): void {
 }
 
 async function processAccessKey(
-  context: HookContext, item: Record<string, any>,
+  context: HookContext,
+  item: Record<string, any>,
 ): Promise<Record<string, any>> {
   const { authentication, vaultToken } = context.params ?? {};
   const vault = context.app.service('vault');
@@ -58,8 +59,10 @@ async function processAccessKey(
 async function populateVaultInfo(context: HookContext): Promise<void> {
   const items = getItems(context);
   if (items instanceof Array) {
-    replaceItems(context,
-      await Promise.all(items.map(async (item) => processAccessKey(context, item))));
+    replaceItems(
+      context,
+      await Promise.all(items.map(async (item) => processAccessKey(context, item))),
+    );
   } else {
     replaceItems(context, await processAccessKey(context, items));
   }

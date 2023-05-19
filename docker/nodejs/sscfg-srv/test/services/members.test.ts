@@ -3,14 +3,14 @@ import {
   BadRequest, Conflict, Forbidden, MethodNotAllowed, NotFound,
 } from '@feathersjs/errors';
 import { Params } from '@feathersjs/feathers';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { Members } from '../../src/models/members.model';
 import { Streams } from '../../src/models/streams.model';
 import { Users } from '../../src/models/users.model';
 
 describe('\'members\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('members');
   let user: Users;
   let user1: Users;

@@ -1,6 +1,6 @@
 // Initializes the `members` service on path `/members`
 import { ServiceAddons } from '@feathersjs/feathers';
-import { QueryBuilder } from 'knex';
+import { Knex } from 'knex';
 import { Application } from '../../declarations';
 import createModel from '../../models/members.model';
 import { Members } from './members.class';
@@ -24,7 +24,7 @@ export default function (app: Application): void {
     eagerFilters: [
       {
         expression: 'user',
-        filter: (builder: QueryBuilder) => {
+        filter: (builder: Knex.QueryBuilder) => {
           builder.select('name', 'email', 'displayName', 'avatar');
         },
       },

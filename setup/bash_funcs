@@ -10,13 +10,6 @@ search_docker_compose () {
   local docker_info=$(docker info -f '{{json .}}' | jq '.ClientInfo.Plugins[] | select(.Name=="compose")')
   if [[ -n "$docker_info" ]]; then
     DOCKER_COMPOSE='docker compose'
-  elif type docker-compose > /dev/null 2>&1; then
-    DOCKER_COMPOSE='docker-compose'
-    local version=$(docker-compose version --short)
-    local vers=(${version//./ })
-    if [[ ${vers[1]} -lt 28 ]]; then
-      die "It must be docker-compose version 1.28.0 or later."
-    fi
   else
     die "'docker compose' not found"
   fi

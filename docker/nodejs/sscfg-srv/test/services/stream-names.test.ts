@@ -1,10 +1,10 @@
 import { BadRequest } from '@feathersjs/errors';
-import knex from 'knex';
+import { Knex } from 'knex';
 import app from '../../src/app';
 import { Users } from '../../src/models/users.model';
 
 describe('\'stream-names\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('stream-names');
   const name1 = 'config-001';
   const name2 = 'config-002';

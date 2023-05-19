@@ -145,15 +145,11 @@ describe('添付ファイルに関するテスト', () => {
                 cy.get('@comment').should('have.value', '');
                 cy.get('@enabled').invoke('attr', 'aria-checked').should('eq', 'true');
 
-                cy.fixture(file1, 'base64').then((data) => {
-                  cy.get('@file').attachFile({
-                    fileContent: data,
-                    filePath: file1,
-                    fileName: file1,
-                    encoding: 'base64',
-                    mimeType: 'application/octet-stream',
-                  });
-                });
+                cy.fixture(file1, null).as('filename');
+                cy.get('@file').selectFile({
+                  contents: '@filename',
+                  mimeType: 'application/octet-stream',
+                }, { force: true });
                 if (secret) {
                   cy.get('@secret').check({ force: true });
                 } else {
@@ -259,15 +255,11 @@ describe('添付ファイルに関するテスト', () => {
         cy.get('form header div').contains('添付ファイルの登録')
           .parents('div.v-dialog').first()
           .within(() => {
-            cy.fixture(file1, 'base64').then((data) => {
-              cy.get('[data-cy=input-file]').attachFile({
-                fileContent: data,
-                filePath: file1,
-                fileName: file1,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(file1, null).as('filename');
+            cy.get('[data-cy=input-file]').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
           });
       });
     });
@@ -285,15 +277,11 @@ describe('添付ファイルに関するテスト', () => {
           cy.get('[data-cy=input-comment]').as('comment');
           cy.get('[data-cy=input-enabled]').as('enabled');
 
-          cy.fixture(file1, 'base64').then((data) => {
-            cy.get('@file').attachFile({
-              fileContent: data,
-              filePath: file1,
-              fileName: file1,
-              encoding: 'base64',
-              mimeType: 'application/octet-stream',
-            });
-          });
+          cy.fixture(file1, null).as('filename');
+          cy.get('@file').selectFile({
+            contents: '@filename',
+            mimeType: 'application/octet-stream',
+          }, { force: true });
           cy.get('@secret').check({ force: true });
           cy.get('@target').type(target);
           cy.get('@comment').type(comment);
@@ -431,15 +419,11 @@ describe('添付ファイルに関するテスト', () => {
             cy.get('@comment').should('have.value', comment);
             cy.get('@enabled').invoke('attr', 'aria-checked').should('eq', 'true');
 
-            cy.fixture(file1, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath: file1,
-                fileName: file1,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(file1, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@btnSubmit').click();
           });
         cy.contains('添付ファイルの更新').should('not.exist');
@@ -580,15 +564,11 @@ describe('添付ファイルに関するテスト', () => {
             cy.get('[data-cy=input-target]').as('target');
             cy.get('[data-cy=input-comment]').as('comment');
             cy.get('[data-cy=input-enabled]').as('enabled');
-            cy.fixture(file1, 'base64').then((data) => {
-              cy.get('@file').attachFile({
-                fileContent: data,
-                filePath: file1,
-                fileName: file1,
-                encoding: 'base64',
-                mimeType: 'application/octet-stream',
-              });
-            });
+            cy.fixture(file1, null).as('filename');
+            cy.get('@file').selectFile({
+              contents: '@filename',
+              mimeType: 'application/octet-stream',
+            }, { force: true });
             cy.get('@target').type(target);
             cy.get('@comment').type(comment);
             cy.get('@secret').parent().click();

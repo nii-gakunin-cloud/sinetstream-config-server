@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "group:allNonMajor"
+  ],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "enabledManagers": ["npm"],
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "groupName": "definitelyTyped",
+      "matchPackagePrefixes": ["@types/"],
+      "automerge": true,
+      "major": {
+        "automerge": false
+      }
+    },
+    {
+      "matchPackageNames": ["knex"],
+      "allowedVersions": "<1.0.0"
+    },
+    {
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<4.8.0"
+    },
+    {
+      "matchPackageNames": ["@types/node", "node"],
+      "allowedVersions": "<1.7.0"
+    }
+  ],
+  "timezone": "Asia/Tokyo",
+  "schedule": [
+    "before 9am on friday"
+  ],
+  "assignees": ["suri_endo"]
+}

@@ -67,7 +67,6 @@ export default defineComponent({
       },
     });
     const { Topic } = context.root.$FeathersVuex.api;
-    const { id } = props;
     const topicWarnings = ref('');
     const ignoreDupTopics = ref(false);
     const updatedWarnings = ref(Date.now());
@@ -89,7 +88,7 @@ export default defineComponent({
     };
 
     const filterDuplicateTopics = async (topics: string[]) => {
-      const topicQuery = id != null ? { stream_id: { $ne: id } } : {};
+      const topicQuery = props.id != null ? { stream_id: { $ne: props.id } } : {};
       return (await Promise.all(
         topics.map(async (topic: string) => {
           const result = await Topic.find({

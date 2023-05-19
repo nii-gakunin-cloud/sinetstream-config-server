@@ -1,11 +1,11 @@
 import { Params } from '@feathersjs/feathers';
-import knex from 'knex';
+import { Knex } from 'knex';
 import { Streams } from '../../src/models/streams.model';
 import app from '../../src/app';
 import { Users } from '../../src/models/users.model';
 
 describe('\'topics\' service', () => {
-  let db: knex;
+  let db: Knex;
   const service = app.service('topics');
   const streamService = app.service('streams');
   let user: Users;
@@ -47,7 +47,8 @@ kafka-service:
     it('設定ファイルにトピック名が一つある場合', async () => {
       const topic = topic1;
       const stream = await streamService.create(
-        { name, configFile: configFile1(topic) }, { ...params },
+        { name, configFile: configFile1(topic) },
+        { ...params },
       );
       const ret = await service.find({ ...params, paginate: false });
       expect(ret).toMatchObject([{ name: topic, stream_id: stream.id }]);
@@ -56,7 +57,8 @@ kafka-service:
     it('設定ファイルにトピック名が二つある場合', async () => {
       const topics: [string, string] = [topic1, topic2];
       const stream = await streamService.create(
-        { name, configFile: configFile2(...topics) }, { ...params },
+        { name, configFile: configFile2(...topics) },
+        { ...params },
       );
       const ret = await service.find({ ...params, paginate: false });
       expect(ret).toMatchObject(
@@ -67,24 +69,21 @@ kafka-service:
     it('設定ファイルのトピック名が重複している場合', async () => {
       const topic = topic1;
       const stream = await streamService.create(
-        { name, configFile: configFile2(topic, topic) }, { ...params },
+        { name, configFile: configFile2(topic, topic) },
+        { ...params },
       );
       const ret = await service.find({ ...params, paginate: false });
       expect(ret).toMatchObject([{ name: topic, stream_id: stream.id }]);
     });
 
     it('設定ファイルにトピック名がない場合', async () => {
-      await streamService.create(
-        { name, configFile: configFile0() }, { ...params },
-      );
+      await streamService.create({ name, configFile: configFile0() }, { ...params });
       const ret = await service.find({ ...params, paginate: false });
       expect(ret).toHaveLength(0);
     });
 
     it('設定ファイルが構文エラーとなる場合', async () => {
-      await streamService.create(
-        { name, configFile: badConfigFile(topic1) }, { ...params },
-      );
+      await streamService.create({ name, configFile: badConfigFile(topic1) }, { ...params });
       const ret = await service.find({ ...params, paginate: false });
       expect(ret).toHaveLength(0);
     });
@@ -118,7 +117,8 @@ kafka-service:
 
       beforeEach(async () => {
         stream = await streamService.create(
-          { name, configFile: configFile2(topic1, topic2) }, { ...params },
+          { name, configFile: configFile2(topic1, topic2) },
+          { ...params },
         );
       });
     });
@@ -142,7 +142,8 @@ kafka-service:
 
       beforeEach(async () => {
         stream = await streamService.create(
-          { name, configFile: configFile1(topic1) }, { ...params },
+          { name, configFile: configFile1(topic1) },
+          { ...params },
         );
       });
     });
@@ -193,7 +194,8 @@ kafka-service:
 
       beforeEach(async () => {
         stream = await streamService.create(
-          { name, configFile: configFile2(topic1, topic2) }, { ...params },
+          { name, configFile: configFile2(topic1, topic2) },
+          { ...params },
         );
       });
     });

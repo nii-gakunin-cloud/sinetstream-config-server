@@ -23,12 +23,12 @@
 * [Docker Engine](https://www.docker.com/)
     - 19.03 以降
 
-Dockerコンテナ起動などの操作には [Docker Compose](https://github.com/docker/compose) を利用します。Docker Composeはv2もしくは [1.28.0](https://docs.docker.com/compose/release-notes/#1280) 以降のものが必要となりますので、事前にインストールを行ってください。
+Dockerコンテナ起動などの操作には [Docker Compose](https://github.com/docker/compose) を利用します。Docker Composeはv2以降のものが必要となりますので、事前にインストールを行ってください。
 
 Docker, Docker Composeのインストール手順については以下に示すリンク先の情報などを参照してください。
 
 * [Install Docker Engine](https://docs.docker.com/engine/install/)
-* [Docker Compose v2 - Where to get Docker Compose](https://github.com/docker/compose#linux)
+* [Install Docker Compose CLI plugin](https://docs.docker.com/compose/install/compose-plugin/)
 
 またコンフィグサーバのセットアップスクリプトを実行するには以下のコマンドが必要となります。OSのパッケージなどを利用して事前にインストールしてください。
 

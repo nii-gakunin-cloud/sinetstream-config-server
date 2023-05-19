@@ -5,7 +5,7 @@ import {
   BadRequest, MethodNotAllowed, NotAuthenticated, NotFound,
 } from '@feathersjs/errors';
 import {
-  Id, Params, ServiceAddons, ServiceMethods,
+  Id, Params, Query, ServiceAddons, ServiceMethods,
 } from '@feathersjs/feathers';
 import { createPublicKey } from 'crypto';
 import { ServiceSwaggerOptions } from 'feathers-swagger/types';
@@ -14,7 +14,8 @@ import { toVid as toAttachFileVid } from '../../hooks/process-attach-files';
 import { toVid as toEncryptKeyVid } from '../../hooks/process-encrypt-keys';
 import { toVid as toPublicKeyVid } from '../../hooks/process-public-key';
 import { toVid as toUserParameterVid } from '../../hooks/process-user-parameters';
-import { PublicKey, SecretData } from '../../utils/sinetstreamConfigFile';
+import { encrypt, KeyEncapsulateMechanism, RsaOaep } from '../../utils/crypto';
+import { PublicKey } from '../../utils/sinetstreamConfigFile';
 import { Streams } from '../streams/streams.class';
 import { Vault } from '../vault/vault.class';
 
@@ -25,7 +26,11 @@ interface Data {
   value: string;
 }
 
-type SecretServiceType = 'encrypt-keys' | 'attach-files' | 'user-parameters';
+const SecretServices = ['encrypt-keys', 'attach-files', 'user-parameters'] as const;
+type SecretServiceType = typeof SecretServices[number];
+
+export const RsaOaepSha256 = '0x1' as const;
+export const RsaOaepSha1 = '0x2' as const;
 
 function isSecretServiceType(arg: string): arg is SecretServiceType {
   return ['encrypt-keys', 'attach-files', 'user-parameters'].includes(arg);
@@ -108,9 +113,24 @@ class InnerApiV1Secrets extends AdapterService<Data> implements ServiceMethods<D
     return { name, id: sid };
   }
 
+  static getKem(query: Query | undefined): KeyEncapsulateMechanism {
+    const { kem } = query || {};
+    if (kem == null) {
+      return RsaOaep.Sha256;
+    }
+    switch (kem) {
+      case RsaOaepSha256:
+        return RsaOaep.Sha256;
+      case RsaOaepSha1:
+        return RsaOaep.Sha1;
+      default:
+        throw new BadRequest();
+    }
+  }
+
   async _get(id: Id, params?: Params): Promise<Data> {
     const serviceId = InnerApiV1Secrets.parseId(id);
-    const { user, authentication } = params ?? {};
+    const { user, authentication, query } = params ?? {};
     if (user == null) {
       throw new NotAuthenticated();
     }
@@ -130,9 +150,10 @@ class InnerApiV1Secrets extends AdapterService<Data> implements ServiceMethods<D
     } else {
       throw new BadRequest();
     }
+    const kem = InnerApiV1Secrets.getKem(query);
     const { value } = await this.vaultService.get(vid, { authentication });
-    const data = new SecretData(Buffer.from(value, 'base64'), publicKey.publicKey);
-    const encryptedString = data.buffer.toString('base64');
+    const encryptedString = encrypt(Buffer.from(value, 'base64'), publicKey.publicKey, kem).toString('base64');
+
     return {
       id,
       fingerprint: publicKey.fingerprint,
@@ -173,6 +194,23 @@ const docs: ServiceSwaggerOptions = {
   operations: {
     get: {
       description: '指定された id のコンフィグ情報を取得する',
+      parameters: [
+        {
+          name: 'kem',
+          in: 'query',
+          type: 'string',
+          enum: ['0x1', '0x2'],
+          default: '0x1',
+          description: '秘匿情報の暗号化方式の指定(0x1: OAEP-RSA sha256, 0x2: OAEP-RSA sha1)。',
+        },
+        {
+          name: 'SINETStream-config-publickey',
+          in: 'header',
+          schema: { type: 'string' },
+          required: false,
+          description: '秘匿情報の暗号化に用いる公開鍵のフィンガープリント',
+        },
+      ],
     },
   },
   definitions: {

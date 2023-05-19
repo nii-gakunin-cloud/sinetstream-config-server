@@ -3,9 +3,12 @@ import {
 } from './dialog';
 
 const useEncryptKey = (
-  props: ValueAware<boolean>, emit: EmitFn, changeEncryptKeys = false,
+  props: ValueAware<boolean>,
+  emit: EmitFn,
+  changeEncryptKeys = false,
 ): SubmitDialog => useSubmitDialog(
-  props, emit,
+  props,
+  emit,
   (res) => {
     if (changeEncryptKeys) {
       emit('change-encrypt-keys', res.target);

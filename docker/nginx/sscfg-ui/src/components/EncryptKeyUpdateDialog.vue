@@ -31,8 +31,7 @@ export default defineComponent({
   },
   setup(props, context) {
     const { EncryptKey } = context.root.$FeathersVuex.api;
-    const { id } = props;
-    const { item: item0 } = useGet({ model: EncryptKey, id });
+    const { item: item0 } = useGet({ model: EncryptKey, id: props.id });
     const item = ref(new EncryptKey());
     if (item0.value != null) {
       item.value.enabled = item0.value.enabled;

@@ -3,7 +3,7 @@ import { getItems, replaceItems } from 'feathers-hooks-common';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class UserParameter extends BaseModel {
-  static modelName = 'UserParameter'
+  static modelName = 'UserParameter';
 
   static instanceDefaults() {
     return {

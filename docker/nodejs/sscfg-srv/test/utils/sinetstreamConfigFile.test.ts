@@ -148,7 +148,9 @@ config:
         it.each([target1, target3, target4])('一か所の埋め込み: %s', (target) => {
           const doc = YAML.parseDocument(configFile, { customTags: [sinetstreamEncrypt] });
           embedSecret(
-            doc, target, Buffer.from(binaryValue, 'base64'),
+            doc,
+            target,
+            Buffer.from(binaryValue, 'base64'),
             { publicKey: pubKey, fingerprint },
           );
           const paths = `config.${target}`.split('.');
@@ -172,7 +174,9 @@ config:
         const doc = YAML.parseDocument(configFileV1());
         await expect(async () => {
           embedSecret(
-            doc, target, Buffer.from(binaryValue, 'base64'),
+            doc,
+            target,
+            Buffer.from(binaryValue, 'base64'),
             { publicKey: pubKey, fingerprint },
           );
         }).rejects.toThrowError(IllegalArgument);

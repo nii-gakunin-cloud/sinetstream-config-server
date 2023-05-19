@@ -77,7 +77,8 @@ export default defineComponent({
   },
   setup(props, context) {
     const { dialog, observer, onSubmit } = useSubmitDialog(
-      props, context.emit,
+      props,
+      context.emit,
       () => {
         if (props.id != null) {
           context.emit('change-stream', props.id);

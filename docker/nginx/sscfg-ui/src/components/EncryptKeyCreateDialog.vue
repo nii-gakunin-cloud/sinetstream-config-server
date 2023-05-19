@@ -32,8 +32,12 @@ export default defineComponent({
   },
   setup(props, context) {
     const { EncryptKey } = context.root.$FeathersVuex.api;
-    const item = ref(new EncryptKey());
-    item.value.stream_id = props.sid;
+    const newEncryptKey = (sid: number) => {
+      const item = new EncryptKey();
+      item.stream_id = sid;
+      return item;
+    };
+    const item = ref(newEncryptKey(props.sid));
     extend('target-pattern', targetPattern('*.crypto.key', 'service-kafka-001.crypto.key'));
     extend('unique-target', {
       validate: async (v): Promise<boolean> => {

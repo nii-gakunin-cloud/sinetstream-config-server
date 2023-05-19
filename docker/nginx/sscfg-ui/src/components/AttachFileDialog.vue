@@ -106,12 +106,14 @@ export default defineComponent({
   },
   setup(props, context) {
     const { AttachFile } = context.root.$FeathersVuex.api;
+    const newAttachFile = (sid: number) => {
+      const item = new AttachFile();
+      item.stream_id = sid;
+      return item;
+    };
     const { item } = props.id != null
       ? useGet({ model: AttachFile, id: props.id })
-      : { item: ref(new AttachFile()) };
-    if (props.id == null && props.sid != null) {
-      item.value.stream_id = props.sid;
-    }
+      : { item: ref(newAttachFile(props.sid)) };
     const { dialog, observer, onSubmit } = useSubmitDialog(props, context.emit);
     const update = computed(() => props.id != null);
     const submit = computed(() => (update.value ? '更新' : '登録'));

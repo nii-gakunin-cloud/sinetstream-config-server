@@ -2,7 +2,7 @@ import { HookContext } from '@feathersjs/feathers';
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class Stream extends BaseModel {
-  static modelName = 'Stream'
+  static modelName = 'Stream';
 
   static instanceDefaults() {
     return {

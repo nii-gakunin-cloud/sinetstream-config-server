@@ -1,7 +1,7 @@
 import feathersClient, { BaseModel, makeServicePlugin } from '@/feathers-client';
 
 class PublicKey extends BaseModel {
-  static modelName = 'PublicKey'
+  static modelName = 'PublicKey';
 
   static instanceDefaults() {
     return {
